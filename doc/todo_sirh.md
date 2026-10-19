@@ -4,15 +4,15 @@ Répartition par bloc du cours *Conception logiciel – Gestion RH*, avec une ph
 
 ## Tous ensemble (début)
 
-- [ ] Valider le modèle de données commun (diagramme ER du fichier de conception)
-- [ ] Choisir la stack technique et créer le dépôt Git (branches, conventions de nommage)
-- [ ] Définir les statuts et le format de traçabilité des transitions (acteur, date, commentaire)
+- [x] Valider le modèle de données commun (diagramme ER du fichier de conception)
+- [x] Choisir la stack technique et créer le dépôt Git (branches, conventions de nommage)
+- [x] Définir les statuts et le format de traçabilité des transitions (acteur, date, commentaire)
 
 ## Personne 1 : Bloc 1, Besoin en personnel
 
-- [ ] Entités `Département`, `Poste`, `DemandeRecrutement`, `Validation`
-- [ ] Règles RG1-01 à RG1-07 (motif obligatoire, demande non modifiable après décision…)
-- [ ] Workflow de validation Manager → RH → Direction
+- [x] Entités `Département`, `Poste`, `DemandeRecrutement`, `Validation`
+- [x] Règles RG1-01 à RG1-07 (motif obligatoire, demande non modifiable après décision…)
+- [x] Workflow de validation Manager → RH → Direction
 - [ ] Écrans : formulaire de demande, liste des demandes à valider, suivi d'état
 
 ## Personne 2 : Bloc 2, Recrutement
