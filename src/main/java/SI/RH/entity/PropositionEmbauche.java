@@ -1,72 +1,102 @@
 package SI.RH.entity;
 
-import java.util.Date;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "propositions_embauche")
 public class PropositionEmbauche {
-    private int id;
-    private int candidatureId;
-    private int statutId;
-    private Date dateEnvoi;
-    private Date dateReponse;
-    private Date dateExpiration;
-    private Date created_at;
-    private Date updated_at;
 
-    public PropositionEmbauche(){}
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-    public int getId() {
+    @Column(nullable = false)
+    private Long candidatureId;
+
+    @Column(nullable = false, length = 20)
+    private String statut;
+
+    private LocalDateTime dateEnvoi;
+    private LocalDateTime dateReponse;
+    private LocalDate dateExpiration;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    protected PropositionEmbauche() {
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public int getCandidatureId() {
+    public Long getCandidatureId() {
         return candidatureId;
     }
 
-    public void setCandidatureId(int candidatureId) {
+    public void setCandidatureId(Long candidatureId) {
         this.candidatureId = candidatureId;
     }
 
-    public Date getDateEnvoi() {
+    public String getStatut() {
+        return statut;
+    }
+
+    public void setStatut(String statut) {
+        this.statut = statut;
+    }
+
+    public LocalDateTime getDateEnvoi() {
         return dateEnvoi;
     }
 
-    public void setDateEnvoi(Date dateEnvoi) {
+    public void setDateEnvoi(LocalDateTime dateEnvoi) {
         this.dateEnvoi = dateEnvoi;
     }
 
-    public Date getDateReponse() {
+    public LocalDateTime getDateReponse() {
         return dateReponse;
     }
 
-    public void setDateReponse(Date dateReponse) {
+    public void setDateReponse(LocalDateTime dateReponse) {
         this.dateReponse = dateReponse;
     }
 
-    public Date getDateExpiration() {
+    public LocalDate getDateExpiration() {
         return dateExpiration;
     }
 
-    public void setDateExpiration(Date dateExpiration) {
+    public void setDateExpiration(LocalDate dateExpiration) {
         this.dateExpiration = dateExpiration;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Date getUpdated_at() {
-        return updated_at;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

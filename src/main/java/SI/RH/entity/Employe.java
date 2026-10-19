@@ -1,33 +1,49 @@
 package SI.RH.entity;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
+@Entity
+@Table(name = "employes")
 public class Employe {
-    private int id;
-    private int personneId;
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, length = 30)
     private String matricule;
-    private Date dateEmbauche;
-    private int statutId;
-    private Date created_at;
-    private Date updated_at;
 
-    public Employe(){}
+    @Column(nullable = false, unique = true)
+    private Long personneId;
 
-    public int getId() {
+    @Column(nullable = false)
+    private LocalDate dateEmbauche;
+
+    @Column(nullable = false, length = 50)
+    private String statut;
+
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
+
+    protected Employe() {
+    }
+
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
-    }
-
-    public int getPersonneId() {
-        return personneId;
-    }
-
-    public void setPersonneId(int personneId) {
-        this.personneId = personneId;
     }
 
     public String getMatricule() {
@@ -38,35 +54,43 @@ public class Employe {
         this.matricule = matricule;
     }
 
-    public Date getDateEmbauche() {
+    public Long getPersonneId() {
+        return personneId;
+    }
+
+    public void setPersonneId(Long personneId) {
+        this.personneId = personneId;
+    }
+
+    public LocalDate getDateEmbauche() {
         return dateEmbauche;
     }
 
-    public void setDateEmbauche(Date dateEmbauche) {
+    public void setDateEmbauche(LocalDate dateEmbauche) {
         this.dateEmbauche = dateEmbauche;
     }
 
-    public int getStatutId() {
-        return statutId;
+    public String getStatut() {
+        return statut;
     }
 
-    public void setStatutId(int statutId) {
-        this.statutId = statutId;
+    public void setStatut(String statut) {
+        this.statut = statut;
     }
 
-    public Date getCreated_at() {
-        return created_at;
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 
-    public void setCreated_at(Date created_at) {
-        this.created_at = created_at;
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
-    public Date getUpdated_at() {
-        return updated_at;
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
     }
 
-    public void setUpdated_at(Date updated_at) {
-        this.updated_at = updated_at;
+    public void setUpdatedAt(LocalDateTime updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

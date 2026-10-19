@@ -1,4 +1,4 @@
-CREATE TABLE personne(
+CREATE TABLE personnes(
     id SERIAL PRIMARY KEY,
     nom VARCHAR(50) NOT NULL,
     prenom VARCHAR(50) NOT NULL,
@@ -9,7 +9,7 @@ CREATE TABLE personne(
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE propositionembauche(
+CREATE TABLE propositionembauches(
     id SERIAL PRIMARY KEY,
     candidatureId INT NOT NULL,
     statutId INT NOT NULL REFERENCES statut(id),
@@ -20,7 +20,7 @@ CREATE TABLE propositionembauche(
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
-CREATE TABLE employe(
+CREATE TABLE employes(
     id SERIAL PRIMARY KEY,
     personneId INT NOT NULL REFERENCES personne(id),
     matricule VARCHAR(20) UNIQUE NOT NULL,
