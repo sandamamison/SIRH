@@ -1,5 +1,8 @@
 # Guide & Conseils de Conception de Base de Données
 
+> [!NOTE]
+> Les exemples de ce guide utilisent la convention générique `id_xxx` ; la norme de l'équipe prime : PK = `id`, FK = `(table)Id` (voir `doc/normes.md`).
+
 Ce document résume les règles d'or, les réflexes et les pièges classiques à garder en tête pour réussir la conception d'une base relationnelle (TPs, projets, examens).
 
 ---
