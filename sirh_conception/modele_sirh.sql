@@ -137,6 +137,7 @@ CREATE UNIQUE INDEX uq_personne_email_lower ON PERSONNE (lower(email));
 
 -- ============================================================================
 -- BLOC 1 : STRUCTURE ORGANISATIONNELLE & BESOIN EN PERSONNEL
+-- OBSOLETE : voir bloc1.sql (norme id / (table)Id)
 -- ============================================================================
 
 CREATE TABLE DEPARTEMENT (
