@@ -2,75 +2,76 @@ package SI.RH.entity;
 
 import SI.RH.entity.enums.MotifRecrutement;
 import SI.RH.entity.enums.StatutDemande;
+import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
- * Entité DEMANDE_RECRUTEMENT — Bloc 1 : Expression du besoin en personnel.
- *
- * Un manager exprime un besoin de création ou de remplacement d'un poste.
- * La demande suit un workflow de validation : Manager → RH → Direction.
- *
- * Règles de gestion :
- *   RG1-02 : le motif est CREATION ou REMPLACEMENT.
- *   RG1-03 : si motif = REMPLACEMENT, idEmployeRemplace est obligatoire (et interdit sinon).
- *   RG1-04 : budget et date souhaitée sont obligatoires.
- *   RG1-07 : une demande VALIDEE_DIRECTION ou REJETEE n'est plus modifiable.
- *
- * Table SQL : DEMANDE_RECRUTEMENT
+ * Entité JPA DemandeRecrutement — Bloc 1 : Expression du besoin en personnel.
  */
+@Entity
+@Table(name = "demandeRecrutement")
 public class DemandeRecrutement {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    /** Poste concerné par la demande (création ou remplacement). NOT NULL. */
-    private int idPoste;
+    @Column(nullable = false)
+    private Integer posteId;
 
-    /** RG1-02 : CREATION ou REMPLACEMENT. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private MotifRecrutement motif;
 
-    /** Explication détaillée du besoin. NOT NULL. */
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String justification;
 
-    /**
-     * RG1-03 : Référence l'employé à remplacer.
-     * Obligatoire si motif = REMPLACEMENT, interdit si motif = CREATION.
-     */
-    private Integer idEmployeRemplace;
+    private Integer employeRemplaceId; // RG1-03 : obligatoire ssi REMPLACEMENT
 
-    /** Nombre de postes à pourvoir. Défaut : 1. Contrainte : > 0. */
-    private int effectifDemande;
+    @Column(nullable = false)
+    private int effectifDemande = 1;
 
-    /** Budget prévisionnel total en Ariary. Contrainte : > 0. */
-    private int budgetPrevu;
+    @Column(nullable = false)
+    private long budgetPrevu; // RG1-04 (BIGINT en BDD)
 
-    /** Date à laquelle le poste doit être pourvu. NOT NULL. */
-    private Date dateSouhaitee;
+    @Column(nullable = false)
+    private LocalDate dateSouhaitee; // RG1-04
 
-    /** Statut courant dans le workflow. Défaut : BROUILLON. */
-    private StatutDemande statut;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
+    private StatutDemande statut = StatutDemande.BROUILLON;
 
-    /** Manager qui a émis la demande. Référence un Employe. NOT NULL. */
-    private int idDemandeur;
+    @Column(nullable = false)
+    private Integer employeDemandeurId; // RG1-01
 
-    private Date dateCreation;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dateCreation;
+
+    @PrePersist
+    void avantInsertion() {
+        if (dateCreation == null) {
+            dateCreation = LocalDateTime.now();
+        }
+    }
 
     public DemandeRecrutement() {}
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getIdPoste() {
-        return idPoste;
+    public Integer getPosteId() {
+        return posteId;
     }
 
-    public void setIdPoste(int idPoste) {
-        this.idPoste = idPoste;
+    public void setPosteId(Integer posteId) {
+        this.posteId = posteId;
     }
 
     public MotifRecrutement getMotif() {
@@ -89,12 +90,12 @@ public class DemandeRecrutement {
         this.justification = justification;
     }
 
-    public Integer getIdEmployeRemplace() {
-        return idEmployeRemplace;
+    public Integer getEmployeRemplaceId() {
+        return employeRemplaceId;
     }
 
-    public void setIdEmployeRemplace(Integer idEmployeRemplace) {
-        this.idEmployeRemplace = idEmployeRemplace;
+    public void setEmployeRemplaceId(Integer employeRemplaceId) {
+        this.employeRemplaceId = employeRemplaceId;
     }
 
     public int getEffectifDemande() {
@@ -105,19 +106,19 @@ public class DemandeRecrutement {
         this.effectifDemande = effectifDemande;
     }
 
-    public int getBudgetPrevu() {
+    public long getBudgetPrevu() {
         return budgetPrevu;
     }
 
-    public void setBudgetPrevu(int budgetPrevu) {
+    public void setBudgetPrevu(long budgetPrevu) {
         this.budgetPrevu = budgetPrevu;
     }
 
-    public Date getDateSouhaitee() {
+    public LocalDate getDateSouhaitee() {
         return dateSouhaitee;
     }
 
-    public void setDateSouhaitee(Date dateSouhaitee) {
+    public void setDateSouhaitee(LocalDate dateSouhaitee) {
         this.dateSouhaitee = dateSouhaitee;
     }
 
@@ -129,19 +130,19 @@ public class DemandeRecrutement {
         this.statut = statut;
     }
 
-    public int getIdDemandeur() {
-        return idDemandeur;
+    public Integer getEmployeDemandeurId() {
+        return employeDemandeurId;
     }
 
-    public void setIdDemandeur(int idDemandeur) {
-        this.idDemandeur = idDemandeur;
+    public void setEmployeDemandeurId(Integer employeDemandeurId) {
+        this.employeDemandeurId = employeDemandeurId;
     }
 
-    public Date getDateCreation() {
+    public LocalDateTime getDateCreation() {
         return dateCreation;
     }
 
-    public void setDateCreation(Date dateCreation) {
+    public void setDateCreation(LocalDateTime dateCreation) {
         this.dateCreation = dateCreation;
     }
 }

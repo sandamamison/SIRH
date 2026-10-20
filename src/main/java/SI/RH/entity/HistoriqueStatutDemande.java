@@ -1,54 +1,64 @@
 package SI.RH.entity;
 
 import SI.RH.entity.enums.StatutDemande;
+import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
- * Entité HISTORIQUE_STATUT_DEMANDE — Traçabilité des transitions de statut.
- *
- * Chaque changement de statut d'une demande de recrutement est enregistré ici
- * avec l'acteur, la date et un commentaire optionnel.
- *
- * Règle : RG1-06 / Audit 2 Défaut 4 — "qui a fait quoi, quand" est obligatoire.
- *
- * Table SQL : HISTORIQUE_STATUT_DEMANDE
+ * Entité JPA HistoriqueStatutDemande — Bloc 1 : Traçabilité des transitions de statut.
  */
+@Entity
+@Table(name = "historiqueStatutDemande")
 public class HistoriqueStatutDemande {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    private int idDemande;
+    @Column(nullable = false)
+    private Integer demandeRecrutementId;
 
-    /** Statut avant la transition. NULL pour la création initiale. */
+    @Enumerated(EnumType.STRING)
+    @Column(length = 30)
     private StatutDemande ancienStatut;
 
-    /** Nouveau statut après la transition. NOT NULL. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 30)
     private StatutDemande nouveauStatut;
 
-    /** Salarié auteur du changement. Référence un Employe. NOT NULL. */
-    private int idActeur;
+    @Column(nullable = false)
+    private Integer employeActeurId;
 
+    @Column(columnDefinition = "TEXT")
     private String commentaire;
 
-    private Date dateTransition;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dateTransition;
+
+    @PrePersist
+    void avantInsertion() {
+        if (dateTransition == null) {
+            dateTransition = LocalDateTime.now();
+        }
+    }
 
     public HistoriqueStatutDemande() {}
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getIdDemande() {
-        return idDemande;
+    public Integer getDemandeRecrutementId() {
+        return demandeRecrutementId;
     }
 
-    public void setIdDemande(int idDemande) {
-        this.idDemande = idDemande;
+    public void setDemandeRecrutementId(Integer demandeRecrutementId) {
+        this.demandeRecrutementId = demandeRecrutementId;
     }
 
     public StatutDemande getAncienStatut() {
@@ -67,12 +77,12 @@ public class HistoriqueStatutDemande {
         this.nouveauStatut = nouveauStatut;
     }
 
-    public int getIdActeur() {
-        return idActeur;
+    public Integer getEmployeActeurId() {
+        return employeActeurId;
     }
 
-    public void setIdActeur(int idActeur) {
-        this.idActeur = idActeur;
+    public void setEmployeActeurId(Integer employeActeurId) {
+        this.employeActeurId = employeActeurId;
     }
 
     public String getCommentaire() {
@@ -83,11 +93,11 @@ public class HistoriqueStatutDemande {
         this.commentaire = commentaire;
     }
 
-    public Date getDateTransition() {
+    public LocalDateTime getDateTransition() {
         return dateTransition;
     }
 
-    public void setDateTransition(Date dateTransition) {
+    public void setDateTransition(LocalDateTime dateTransition) {
         this.dateTransition = dateTransition;
     }
 }
