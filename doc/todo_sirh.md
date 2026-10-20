@@ -10,10 +10,18 @@ Répartition par bloc du cours *Conception logiciel – Gestion RH*, avec une ph
 
 ## Personne 1 : Bloc 1, Besoin en personnel
 
-- [x] Entités `Département`, `Poste`, `DemandeRecrutement`, `Validation`
-- [x] Règles RG1-01 à RG1-07 (motif obligatoire, demande non modifiable après décision…)
-- [x] Workflow de validation Manager → RH → Direction
-- [ ] Écrans : formulaire de demande, liste des demandes à valider, suivi d'état
+> Refait selon `normes.md` (base `sirh`, PK `id`, FK `(table)Id`) et en MVC orienté service, sous forme d'API. Vues non traitées pour l'instant.
+
+- [x] Configuration : `application.properties` hors Git (+ `.example`), dépendance validation
+- [x] SQL `bloc1.sql` (departement, poste, demandeRecrutement, validationDemande, historiqueStatutDemande)
+- [x] Enums : `StatutDemande` (transitions), `NiveauValidation`, `MotifRecrutement`, `DecisionValidation`
+- [x] Entités JPA renommées (`id`, `posteId`, `departementId`…)
+- [x] Repositories
+- [x] Services : Departement, Poste, DemandeRecrutement
+- [x] Règles RG1-01 à RG1-07 codées dans les services + tests
+- [x] Workflow Manager → RH → Direction (soumettre / valider / refuser) avec historique
+- [x] Controllers REST + DTO + gestion d'erreurs (`/api/departements`, `/api/postes`, `/api/demandes`)
+- [ ] Reporté : écrans (JSP simple) — formulaire de demande, liste à valider, suivi d'état
 
 ## Personne 2 : Bloc 2, Recrutement
 

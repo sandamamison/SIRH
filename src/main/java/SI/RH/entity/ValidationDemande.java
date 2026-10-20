@@ -1,79 +1,81 @@
 package SI.RH.entity;
 
 import SI.RH.entity.enums.DecisionValidation;
-import SI.RH.entity.enums.RoleUtilisateur;
+import SI.RH.entity.enums.NiveauValidation;
+import jakarta.persistence.*;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
- * Entité VALIDATION_DEMANDE — Bloc 1 : Traçabilité du circuit d'approbation.
- *
- * Chaque étape du workflow (MANAGER → RH → DIRECTION) génère un enregistrement
- * immuable dans cette table.
- *
- * Règles de gestion :
- *   RG1-05 : l'ordre de validation est RH puis Direction.
- *   RG1-06 : chaque décision est tracée (qui, quand, commentaire).
- *   Contrainte SQL : une seule décision par (id_demande, niveau_role).
- *
- * Table SQL : VALIDATION_DEMANDE
+ * Entité JPA ValidationDemande — Bloc 1 : Traçabilité du circuit d'approbation.
  */
+@Entity
+@Table(name = "validationDemande")
 public class ValidationDemande {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    /** Demande concernée par cette validation. NOT NULL. */
-    private int idDemande;
+    @Column(nullable = false)
+    private Integer demandeRecrutementId;
 
-    /**
-     * Salarié qui a pris la décision.
-     * Référence un Employe ayant le rôle correspondant à niveauRole.
-     */
-    private int idValideur;
+    @Column(nullable = false)
+    private Integer employeValideurId;
 
-    /** Niveau hiérarchique de la validation : MANAGER, RH ou DIRECTION. */
-    private RoleUtilisateur niveauRole;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
+    private NiveauValidation niveau;
 
-    /** APPROUVE ou REJETE. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 20)
     private DecisionValidation decision;
 
-    /** Commentaire libre justifiant la décision (optionnel). */
+    @Column(columnDefinition = "TEXT")
     private String commentaire;
 
-    private Date dateDecision;
+    @Column(nullable = false, updatable = false)
+    private LocalDateTime dateDecision;
+
+    @PrePersist
+    void avantInsertion() {
+        if (dateDecision == null) {
+            dateDecision = LocalDateTime.now();
+        }
+    }
 
     public ValidationDemande() {}
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getIdDemande() {
-        return idDemande;
+    public Integer getDemandeRecrutementId() {
+        return demandeRecrutementId;
     }
 
-    public void setIdDemande(int idDemande) {
-        this.idDemande = idDemande;
+    public void setDemandeRecrutementId(Integer demandeRecrutementId) {
+        this.demandeRecrutementId = demandeRecrutementId;
     }
 
-    public int getIdValideur() {
-        return idValideur;
+    public Integer getEmployeValideurId() {
+        return employeValideurId;
     }
 
-    public void setIdValideur(int idValideur) {
-        this.idValideur = idValideur;
+    public void setEmployeValideurId(Integer employeValideurId) {
+        this.employeValideurId = employeValideurId;
     }
 
-    public RoleUtilisateur getNiveauRole() {
-        return niveauRole;
+    public NiveauValidation getNiveau() {
+        return niveau;
     }
 
-    public void setNiveauRole(RoleUtilisateur niveauRole) {
-        this.niveauRole = niveauRole;
+    public void setNiveau(NiveauValidation niveau) {
+        this.niveau = niveau;
     }
 
     public DecisionValidation getDecision() {
@@ -92,11 +94,11 @@ public class ValidationDemande {
         this.commentaire = commentaire;
     }
 
-    public Date getDateDecision() {
+    public LocalDateTime getDateDecision() {
         return dateDecision;
     }
 
-    public void setDateDecision(Date dateDecision) {
+    public void setDateDecision(LocalDateTime dateDecision) {
         this.dateDecision = dateDecision;
     }
 }

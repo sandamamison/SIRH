@@ -1,46 +1,38 @@
 package SI.RH.entity;
 
-import java.util.Date;
+import jakarta.persistence.*;
 
 /**
- * Entité DEPARTEMENT — Bloc 1 : Structure organisationnelle.
- *
- * Un département est une unité organisationnelle de l'entreprise.
- * Il peut être hiérarchisé (département parent) et avoir un responsable salarié.
- *
- * Table SQL : DEPARTEMENT
+ * Entité JPA Departement — Bloc 1 : Structure organisationnelle.
  */
+@Entity
+@Table(name = "departement")
 public class Departement {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    /** Code court unique du département (ex: "IT", "RH", "FIN"). */
+    @Column(nullable = false, unique = true, length = 20)
     private String codeDepartement;
 
+    @Column(nullable = false, length = 100)
     private String nomDepartement;
 
+    @Column(columnDefinition = "TEXT")
     private String description;
 
-    /**
-     * Responsable du département.
-     * Référence l'id d'un Employe (clé étrangère résolue via ALTER TABLE côté SQL).
-     */
-    private Integer idResponsable;
+    private Integer employeResponsableId;
 
-    /**
-     * Référence le département parent pour modéliser la hiérarchie organisationnelle
-     * (sections, services, départements).
-     * NULL si le département est à la racine.
-     */
-    private Integer idDepartementParent;
+    private Integer departementParentId;
 
     public Departement() {}
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -68,19 +60,19 @@ public class Departement {
         this.description = description;
     }
 
-    public Integer getIdResponsable() {
-        return idResponsable;
+    public Integer getEmployeResponsableId() {
+        return employeResponsableId;
     }
 
-    public void setIdResponsable(Integer idResponsable) {
-        this.idResponsable = idResponsable;
+    public void setEmployeResponsableId(Integer employeResponsableId) {
+        this.employeResponsableId = employeResponsableId;
     }
 
-    public Integer getIdDepartementParent() {
-        return idDepartementParent;
+    public Integer getDepartementParentId() {
+        return departementParentId;
     }
 
-    public void setIdDepartementParent(Integer idDepartementParent) {
-        this.idDepartementParent = idDepartementParent;
+    public void setDepartementParentId(Integer departementParentId) {
+        this.departementParentId = departementParentId;
     }
 }
