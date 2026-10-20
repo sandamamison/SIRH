@@ -1,40 +1,41 @@
 package SI.RH.entity;
 
+import jakarta.persistence.*;
+
 /**
- * Entité POSTE — Bloc 1 : Structure organisationnelle.
- *
- * Un poste est un rôle métier défini, indépendant de toute personne qui l'occupe.
- * Règle de conception : POSTE ≠ EMPLOYE — le poste existe même si personne ne l'occupe (vacant).
- *
- * Table SQL : POSTE
+ * Entité JPA Poste — Bloc 1 : Structure organisationnelle.
  */
+@Entity
+@Table(name = "poste")
 public class Poste {
 
-    private int id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
-    /** Code court unique (ex: "DEV-SR-01", "RH-MGR-02"). */
+    @Column(nullable = false, unique = true, length = 30)
     private String codePoste;
 
+    @Column(nullable = false, length = 100)
     private String titre;
 
+    @Column(columnDefinition = "TEXT")
     private String descriptionMission;
 
-    /** Fourchette basse du salaire mensuel brut en Ariary. */
     private Integer salaireMin;
 
-    /** Fourchette haute du salaire mensuel brut en Ariary. Contrainte : salaireMax >= salaireMin. */
     private Integer salaireMax;
 
-    /** Département auquel ce poste appartient. NOT NULL. */
-    private int idDepartement;
+    @Column(nullable = false)
+    private Integer departementId;
 
     public Poste() {}
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -78,11 +79,11 @@ public class Poste {
         this.salaireMax = salaireMax;
     }
 
-    public int getIdDepartement() {
-        return idDepartement;
+    public Integer getDepartementId() {
+        return departementId;
     }
 
-    public void setIdDepartement(int idDepartement) {
-        this.idDepartement = idDepartement;
+    public void setDepartementId(Integer departementId) {
+        this.departementId = departementId;
     }
 }
