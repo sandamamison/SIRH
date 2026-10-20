@@ -1,6 +1,6 @@
 package SI.RH.entity;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -37,8 +37,13 @@ public class Personne {
 
     private LocalDateTime updatedAt;
 
-    protected Personne() {
+    public Personne() {
     }
+
+    @PrePersist
+    void onCreate() { if (createdAt == null) createdAt = LocalDateTime.now(); updatedAt = createdAt; }
+    @PreUpdate
+    void onUpdate() { updatedAt = LocalDateTime.now(); }
 
     public Long getId() {
         return id;

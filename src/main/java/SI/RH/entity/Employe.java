@@ -1,6 +1,6 @@
 package SI.RH.entity;
 
-import jakarta.persistence.Column;
+import jakarta.persistence.*;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -9,6 +9,7 @@ import jakarta.persistence.Table;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import SI.RH.entity.enums.StatutEmploye;
 
 @Entity
 @Table(name = "employes")
@@ -28,15 +29,21 @@ public class Employe {
     private LocalDate dateEmbauche;
 
     @Column(nullable = false, length = 50)
-    private String statut;
+    @Enumerated(EnumType.STRING)
+    private StatutEmploye statut;
 
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;
 
-    protected Employe() {
+    public Employe() {
     }
+
+    @PrePersist
+    void onCreate() { if (createdAt == null) createdAt = LocalDateTime.now(); updatedAt = createdAt; }
+    @PreUpdate
+    void onUpdate() { updatedAt = LocalDateTime.now(); }
 
     public Long getId() {
         return id;
@@ -70,13 +77,15 @@ public class Employe {
         this.dateEmbauche = dateEmbauche;
     }
 
-    public String getStatut() {
+    public StatutEmploye getStatut() {
         return statut;
     }
 
-    public void setStatut(String statut) {
+    public void setStatut(StatutEmploye statut) {
         this.statut = statut;
     }
+
+    public void setStatut(String statut) { this.statut = statut == null ? null : StatutEmploye.valueOf(statut); }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;

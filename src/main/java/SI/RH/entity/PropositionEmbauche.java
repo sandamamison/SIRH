@@ -1,102 +1,14 @@
 package SI.RH.entity;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
-@Entity
-@Table(name = "propositions_embauche")
+import SI.RH.entity.enums.StatutProposition; import jakarta.persistence.*; import java.time.*;
+@Entity @Table(name="propositions_embauche")
 public class PropositionEmbauche {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
-
-    @Column(nullable = false)
-    private Long candidatureId;
-
-    @Column(nullable = false, length = 20)
-    private String statut;
-
-    private LocalDateTime dateEnvoi;
-    private LocalDateTime dateReponse;
-    private LocalDate dateExpiration;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
-    protected PropositionEmbauche() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getCandidatureId() {
-        return candidatureId;
-    }
-
-    public void setCandidatureId(Long candidatureId) {
-        this.candidatureId = candidatureId;
-    }
-
-    public String getStatut() {
-        return statut;
-    }
-
-    public void setStatut(String statut) {
-        this.statut = statut;
-    }
-
-    public LocalDateTime getDateEnvoi() {
-        return dateEnvoi;
-    }
-
-    public void setDateEnvoi(LocalDateTime dateEnvoi) {
-        this.dateEnvoi = dateEnvoi;
-    }
-
-    public LocalDateTime getDateReponse() {
-        return dateReponse;
-    }
-
-    public void setDateReponse(LocalDateTime dateReponse) {
-        this.dateReponse = dateReponse;
-    }
-
-    public LocalDate getDateExpiration() {
-        return dateExpiration;
-    }
-
-    public void setDateExpiration(LocalDate dateExpiration) {
-        this.dateExpiration = dateExpiration;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    public void setUpdatedAt(LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
+ @Id @GeneratedValue(strategy=GenerationType.IDENTITY) private Long id;
+ @Column(name="candidature_id",nullable=false) private Long candidatureId;
+ @Enumerated(EnumType.STRING) @Column(nullable=false,length=20) private StatutProposition statut;
+ private LocalDateTime dateEnvoi,dateReponse; private LocalDate dateExpiration; private String commentaire,createdBy;
+ @Column(nullable=false,updatable=false) private LocalDateTime createdAt; private LocalDateTime updatedAt;
+ public PropositionEmbauche() {}
+ public Long getId(){return id;} public void setId(Long v){id=v;} public Long getCandidatureId(){return candidatureId;} public void setCandidatureId(Long v){candidatureId=v;}
+ public StatutProposition getStatut(){return statut;} public void setStatut(StatutProposition v){statut=v;} public LocalDateTime getDateEnvoi(){return dateEnvoi;} public void setDateEnvoi(LocalDateTime v){dateEnvoi=v;} public LocalDateTime getDateReponse(){return dateReponse;} public void setDateReponse(LocalDateTime v){dateReponse=v;} public LocalDate getDateExpiration(){return dateExpiration;} public void setDateExpiration(LocalDate v){dateExpiration=v;} public String getCommentaire(){return commentaire;} public void setCommentaire(String v){commentaire=v;} public String getCreatedBy(){return createdBy;} public void setCreatedBy(String v){createdBy=v;} public LocalDateTime getCreatedAt(){return createdAt;} public void setCreatedAt(LocalDateTime v){createdAt=v;} public LocalDateTime getUpdatedAt(){return updatedAt;} public void setUpdatedAt(LocalDateTime v){updatedAt=v;}
+ @PrePersist void create(){if(createdAt==null)createdAt=LocalDateTime.now();updatedAt=createdAt;} @PreUpdate void update(){updatedAt=LocalDateTime.now();}
 }

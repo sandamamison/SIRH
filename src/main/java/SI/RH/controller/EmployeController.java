@@ -1,0 +1,3 @@
+package SI.RH.controller;
+import SI.RH.dto.EmployeResponse; import SI.RH.entity.Employe; import SI.RH.exception.ResourceNotFoundException; import SI.RH.repository.EmployeRepository; import org.springframework.web.bind.annotation.*;
+@RestController @RequestMapping("/api/employes") public class EmployeController { private final EmployeRepository repo; public EmployeController(EmployeRepository r){repo=r;} @GetMapping("/{id}") public EmployeResponse get(@PathVariable Long id){Employe e=repo.findById(id).orElseThrow(()->new ResourceNotFoundException("Employé introuvable"));return new EmployeResponse(e.getId(),e.getMatricule(),e.getPersonneId(),e.getDateEmbauche(),e.getStatut());} }
