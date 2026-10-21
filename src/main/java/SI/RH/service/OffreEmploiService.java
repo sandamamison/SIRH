@@ -3,11 +3,13 @@ package SI.RH.service;
 import SI.RH.entity.DemandeRecrutement;
 import SI.RH.entity.OffreEmploi;
 import SI.RH.entity.enums.StatutDemande;
+import SI.RH.entity.enums.StatutOffre;
 import SI.RH.repository.DemandeRecrutementRepository;
 import SI.RH.repository.OffreEmploiRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import SI.RH.dto.ActionDemandeRequest;
+import SI.RH.entity.enums.StatutOffre;
 
 import java.util.List;
 
@@ -78,4 +80,31 @@ public class OffreEmploiService {
     offre.setId(null);
     return offreRepository.save(offre);
 }
+    public OffreEmploi publierOffre(Integer id) {
+        OffreEmploi offre = trouverParId(id);
+
+        if (offre.getStatut() != StatutOffre.BROUILLON) {
+            throw new IllegalArgumentException(
+                    "Seule une offre en brouillon peut être publiée.");
+        }
+
+        offre.setStatut(StatutOffre.PUBLIEE);
+        offre.setDatePublication(java.time.LocalDate.now());
+
+        return offreRepository.save(offre);
+    }
+
+    public OffreEmploi cloturerOffre(Integer id) {
+        OffreEmploi offre = trouverParId(id);
+
+        if (offre.getStatut() != StatutOffre.PUBLIEE) {
+            throw new IllegalArgumentException(
+                    "Seule une offre publiée peut être clôturée.");
+        }
+
+        offre.setStatut(StatutOffre.CLOTUREE);
+        offre.setDateCloture(java.time.LocalDate.now());
+
+        return offreRepository.save(offre);
+    }
 }
