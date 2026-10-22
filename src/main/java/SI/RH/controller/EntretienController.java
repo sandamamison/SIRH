@@ -5,11 +5,13 @@ import SI.RH.entity.enums.StatutEntretien;
 import SI.RH.service.EntretienService;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/api/entretiens")
 public class EntretienController {
+
     private final EntretienService service;
 
     public EntretienController(EntretienService service) {
@@ -23,7 +25,12 @@ public class EntretienController {
     }
 
     @GetMapping
-    public List<Entretien> lister() {
+    public List<Entretien> lister(
+            @RequestParam(required = false) Long candidatureId) {
+        if (candidatureId != null) {
+            return service.listerParCandidature(candidatureId);
+        }
+
         return service.lister();
     }
 
@@ -33,8 +40,9 @@ public class EntretienController {
     }
 
     @PatchMapping("/{id}/statut")
-    public Entretien modifierStatut(@PathVariable Long id,
-                                    @RequestParam StatutEntretien statut) {
+    public Entretien modifierStatut(
+            @PathVariable Long id,
+            @RequestParam StatutEntretien statut) {
         return service.modifierStatut(id, statut);
     }
 
