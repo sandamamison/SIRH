@@ -9,7 +9,6 @@ import SI.RH.repository.OffreEmploiRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import SI.RH.dto.ActionDemandeRequest;
-import SI.RH.entity.enums.StatutOffre;
 
 import java.util.List;
 
@@ -101,6 +100,15 @@ public class OffreEmploiService {
             throw new IllegalArgumentException(
                     "Seule une offre publiée peut être clôturée.");
         }
+        if (offre.getDatePublication() == null) {
+    throw new IllegalArgumentException(
+            "La date de publication est obligatoire.");
+}
+
+if (java.time.LocalDate.now().isBefore(offre.getDatePublication())) {
+    throw new IllegalArgumentException(
+            "La date de clôture ne peut pas précéder la publication.");
+}
 
         offre.setStatut(StatutOffre.CLOTUREE);
         offre.setDateCloture(java.time.LocalDate.now());
