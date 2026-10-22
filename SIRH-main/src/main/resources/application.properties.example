@@ -1,0 +1,15 @@
+spring.application.name=RH
+
+# Datasource — copier ce fichier en application.properties et adapter
+spring.datasource.url=jdbc:postgresql://localhost:5432/sirh
+spring.datasource.username=postgres
+spring.datasource.password=CHANGE_ME
+
+# La base est pilotee par les scripts SQL manuels (bloc1.sql, etc.), pas par Hibernate
+spring.jpa.hibernate.ddl-auto=none
+
+# Respecte les noms tels qu'ecrits dans @Table / @Column (norme PK=id, FK=(table)Id)
+spring.jpa.hibernate.naming.physical-strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+
+spring.jpa.open-in-view=false
+spring.jpa.show-sql=true
