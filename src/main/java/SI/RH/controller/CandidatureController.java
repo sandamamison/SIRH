@@ -34,16 +34,20 @@ public class CandidatureController {
         return service.trouverParId(id);
     }
 
-    @PatchMapping("/{id}/statut")
-    public Candidature changerStatut(
-            @PathVariable Long id,
-            @RequestParam StatutCandidature statut) {
-        return service.changerStatut(id, statut);
-    }
-
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void supprimer(@PathVariable Long id) {
         service.supprimer(id);
     }
+
+    @PutMapping("/{id}/statut")
+public Candidature changerStatut(
+        @PathVariable Long id,
+        @RequestParam StatutCandidature statut,
+        @RequestParam Long employeActeurId,
+        @RequestParam(required = false) String commentaire) {
+
+    return service.changerStatut(
+            id, statut, employeActeurId, commentaire);
+}
 }

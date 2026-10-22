@@ -39,4 +39,13 @@ public class OffreEmploiController {
                 request.offre(),
                 request.action());
     }
+@PutMapping("/{id}/publier")
+public OffreEmploi publierOffre(@PathVariable Integer id) {
+    return offreService.publierOffre(id);
+}
+
+@PutMapping("/{id}/cloturer")
+public OffreEmploi cloturerOffre(@PathVariable Integer id) {
+    return offreService.cloturerOffre(id);
+}
 }
