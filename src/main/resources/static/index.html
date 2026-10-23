@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIRH - Gestion du recrutement</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <script src="/js/app.js" defer></script>
+</head>
+<body>
+    <aside class="sidebar">
+        <h2>SIRH</h2>
+        <p>Gestion RH</p>
+        <nav>
+            <a href="#dashboard">Tableau de bord</a>
+            <a href="#offres">Offres d'emploi</a>
+            <a href="#candidatures">Candidatures</a>
+            <a href="#entretiens">Entretiens</a>
+            <a href="#evaluations">Évaluations</a>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <div>
+                <h1>Gestion du recrutement</h1>
+                <p>Suivez vos offres et vos candidats.</p>
+            </div>
+        </header>
+
+        <section id="dashboard">
+            <h2>Tableau de bord</h2>
+            <div class="cards">
+                <article class="card">
+                    <span>Offres d'emploi</span>
+                    <strong id="nombreOffres">—</strong>
+                </article>
+                <article class="card">
+                    <span>Candidatures</span>
+                    <strong id="nombreCandidatures">—</strong>
+                </article>
+                <article class="card">
+                    <span>Entretiens</span>
+                    <strong id="nombreEntretiens">—</strong>
+                </article>
+            </div>
+        </section>
+
+        <section id="offres">
+            <h2>Offres d'emploi</h2>
+            <button onclick="chargerOffres()">Actualiser</button>
+            <p id="messageOffres" class="message"></p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Intitulé</th>
+                            <th>Statut</th>
+                            <th>Date de publication</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listeOffres"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="candidatures">
+            <h2>Candidatures</h2>
+            <button onclick="chargerCandidatures()">Actualiser</button>
+            <p id="messageCandidatures" class="message"></p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Offre</th>
+                            <th>Personne</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listeCandidatures"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="entretiens">
+            <h2>Entretiens</h2>
+            <button onclick="chargerEntretiens()">Actualiser</button>
+            <p id="messageEntretiens" class="message"></p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Candidature</th>
+                            <th>Date et heure</th>
+                            <th>Statut</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listeEntretiens"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section id="evaluations">
+            <h2>Évaluations</h2>
+            <button onclick="chargerEvaluations()">Actualiser</button>
+            <p id="messageEvaluations" class="message"></p>
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Entretien</th>
+                            <th>Note</th>
+                            <th>Avis</th>
+                        </tr>
+                    </thead>
+                    <tbody id="listeEvaluations"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <footer>SIRH · Module recrutement</footer>
+    </main>
+</body>
+</html>

@@ -1,0 +1,162 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f4f6fb;
+    color: #202840;
+}
+
+.sidebar {
+    position: fixed;
+    width: 235px;
+    height: 100vh;
+    background: #202840;
+    color: white;
+    padding: 28px 18px;
+}
+
+.sidebar h2 {
+    margin-bottom: 5px;
+    font-size: 28px;
+}
+
+.sidebar p {
+    color: #aeb8d0;
+    margin-bottom: 35px;
+}
+
+nav a {
+    display: block;
+    color: #e5e9f4;
+    text-decoration: none;
+    padding: 13px 12px;
+    margin: 6px 0;
+    border-radius: 7px;
+}
+
+nav a:hover {
+    background: #34415f;
+}
+
+main {
+    margin-left: 235px;
+    padding: 30px;
+}
+
+header {
+    margin-bottom: 30px;
+}
+
+header h1 {
+    margin-bottom: 8px;
+}
+
+header p {
+    color: #68738a;
+}
+
+section {
+    background: white;
+    border-radius: 12px;
+    padding: 22px;
+    margin-bottom: 25px;
+    box-shadow: 0 3px 14px #17213a0a;
+}
+
+section h2 {
+    margin-top: 0;
+}
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.card {
+    padding: 22px;
+    border-radius: 10px;
+    background: #edf2ff;
+}
+
+.card span {
+    display: block;
+    color: #596782;
+    margin-bottom: 14px;
+}
+
+.card strong {
+    font-size: 30px;
+    color: #354fbd;
+}
+
+button {
+    border: 0;
+    background: #4058c9;
+    color: white;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-bottom: 15px;
+}
+
+button:hover {
+    background: #3045a9;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+th, td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #e9edf5;
+}
+
+th {
+    background: #f7f8fc;
+    color: #596782;
+    font-size: 13px;
+}
+
+.message {
+    color: #68738a;
+    font-size: 14px;
+}
+
+footer {
+    padding: 15px;
+    text-align: center;
+    color: #68738a;
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        position: static;
+        width: 100%;
+        height: auto;
+    }
+
+    nav {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    main {
+        margin-left: 0;
+        padding: 16px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+}
