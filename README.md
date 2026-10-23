@@ -121,6 +121,20 @@ L'API est accessible sur `http://localhost:8080/api/`.
 | `POST` | `/api/demandes/{id}/valider` | Validation RH (`VALIDEE_RH`) ou Direction (`VALIDEE_DIRECTION`) |
 | `POST` | `/api/demandes/{id}/refuser` | Refus motivé avec commentaire obligatoire (`REJETEE`) |
 
+### Format des erreurs
+
+Toutes les erreurs de l'API utilisent le même format :
+
+```json
+{
+  "code": "VALIDATION_ERROR",
+  "message": "Données invalides dans la requête",
+  "details": ["Le poste est obligatoire"]
+}
+```
+
+`details` est facultatif. Les erreurs de validation et de requête invalide renvoient `400`, les ressources absentes `404`, les conflits métier ou d'intégrité `409`, les autres règles métier `422` et les erreurs inattendues `500`.
+
 ---
 
 ## 4. Documentation & Normes
