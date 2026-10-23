@@ -32,6 +32,7 @@ Répartition par bloc du cours *Conception logiciel – Gestion RH*, avec une ph
 
 ## Personne 3 : Bloc 3, Sélection et embauche
 
+- [ ] Lire le guide détaillé : [`bloc3_selection_embauche.md`](bloc3_selection_embauche.md)
 - [ ] Entités `Personne`, `PropositionEmbauche`, `Employé` (matricule unique)
 - [ ] Séparation `Personne` / `Candidature` / `Employé` (CANDIDAT ≠ EMPLOYÉ)
 - [ ] Traitement de l'acceptation : création du dossier salarié, du matricule, du contrat et de l'affectation
