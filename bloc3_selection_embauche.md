@@ -361,4 +361,3 @@ Candidature retenue
 → Contrat et affectation déclenchés
 → Historique consultable
 ```
-
