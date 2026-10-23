@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SIRH — Pages de test</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <p class="eyebrow">SIRH · Bloc 3</p>
+      <h1>Console de test</h1>
+    </div>
+    <button id="refresh-button" class="button button-light" type="button">Rafraîchir</button>
+  </header>
+
+  <main class="layout">
+    <section class="card">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">Propositions d'embauche</p>
+          <h2>Suivi des propositions</h2>
+        </div>
+        <span id="proposition-count" class="counter">0</span>
+      </div>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+      <div id="propositions" class="proposition-list">
+        <p class="muted">Chargement des propositions…</p>
+      </div>
+    </section>
+
+    <aside class="card">
+      <p class="eyebrow">Test API</p>
+      <h2>Créer une proposition</h2>
+      <form id="create-form">
+        <label for="candidature-id">ID candidature</label>
+        <input id="candidature-id" name="candidatureId" type="number" min="1" required>
+
+        <label for="expiration">Date d'expiration</label>
+        <input id="expiration" name="dateExpiration" type="date">
+
+        <label for="created-by">Créée par</label>
+        <input id="created-by" name="createdBy" type="text" maxlength="120" placeholder="RH / utilisateur">
+
+        <label for="commentaire">Commentaire</label>
+        <textarea id="commentaire" name="commentaire" rows="3" maxlength="500"></textarea>
+
+        <button class="button button-primary" type="submit">Envoyer la proposition</button>
+      </form>
+    </aside>
+
+    <section class="card">
+      <p class="eyebrow">Employés</p>
+      <h2>Rechercher un employé</h2>
+      <form id="employee-form" class="inline-form">
+        <label class="sr-only" for="employee-id">ID employé</label>
+        <input id="employee-id" type="number" min="1" required placeholder="ID employé">
+        <button class="button button-secondary" type="submit">Rechercher</button>
+      </form>
+      <div id="employee-result" class="result empty">Aucun employé recherché.</div>
+    </section>
+  </main>
+
+  <dialog id="detail-dialog">
+    <div class="dialog-heading">
+      <h2>Détail de la proposition</h2>
+      <button id="close-dialog" class="icon-button" type="button" aria-label="Fermer">×</button>
+    </div>
+    <div id="proposition-detail"></div>
+    <h3>Historique</h3>
+    <div id="proposition-history" class="history"></div>
+  </dialog>
+
+  <template id="proposition-template">
+    <article class="proposition">
+      <div class="proposition-main">
+        <div>
+          <span class="status"></span>
+          <h3 class="proposition-title"></h3>
+          <p class="muted proposition-meta"></p>
+        </div>
+        <button class="button button-light detail-button" type="button">Détails</button>
+      </div>
+      <p class="commentaire"></p>
+      <div class="actions"></div>
+    </article>
+  </template>
+
+  <script src="app.js"></script>
+</body>
+</html>

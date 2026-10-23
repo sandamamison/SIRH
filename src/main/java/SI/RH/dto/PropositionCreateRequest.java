@@ -1,0 +1,45 @@
+package SI.RH.dto;
+
+import java.time.LocalDate;
+
+public class PropositionCreateRequest {
+    private Long candidatureId;
+    private LocalDate dateExpiration;
+    private String commentaire;
+    private String createdBy;
+
+    public PropositionCreateRequest() {
+    }
+
+    public Long getCandidatureId() {
+        return candidatureId;
+    }
+
+    public LocalDate getDateExpiration() {
+        return dateExpiration;
+    }
+
+    public String getCommentaire() {
+        return commentaire;
+    }
+
+    public String getCreatedBy() {
+        return createdBy;
+    }
+
+    public void setCandidatureId(Long v) {
+        candidatureId = v;
+    }
+
+    public void setDateExpiration(LocalDate v) {
+        dateExpiration = v;
+    }
+
+    public void setCommentaire(String v) {
+        commentaire = v;
+    }
+
+    public void setCreatedBy(String v) {
+        createdBy = v;
+    }
+}

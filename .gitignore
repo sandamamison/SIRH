@@ -1,5 +1,7 @@
 target/
 .env
+.properties
 application.properties
 application-*.properties
 .idea/
+src/main/resources/application.properties

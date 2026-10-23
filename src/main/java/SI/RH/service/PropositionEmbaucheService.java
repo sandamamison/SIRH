@@ -1,0 +1,119 @@
+package SI.RH.service;
+
+import SI.RH.entity.*;
+import SI.RH.entity.enums.*;
+import SI.RH.exception.*;
+import SI.RH.repository.*;
+import SI.RH.service.port.ContratAffectationPort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.*;
+import java.util.*;
+
+@Service
+public class PropositionEmbaucheService {
+    private final PropositionEmbaucheRepository propositions;
+    private final CandidatureRepository candidatures;
+    private final PersonneRepository personnes;
+    private final EmployeRepository employes;
+    private final HistoriquePropositionRepository historique;
+    private final ContratAffectationPort integration;
+
+    public PropositionEmbaucheService(PropositionEmbaucheRepository p, CandidatureRepository c, PersonneRepository pe, EmployeRepository e, HistoriquePropositionRepository h, ContratAffectationPort i) {
+        propositions = p;
+        candidatures = c;
+        personnes = pe;
+        employes = e;
+        historique = h;
+        integration = i;
+    }
+
+    @Transactional
+    public PropositionEmbauche envoyer(Long candidatureId, LocalDate expiration, String commentaire, String auteur) {
+        if (candidatureId == null) throw new BusinessRuleException("La candidature est obligatoire.");
+        Candidature c = candidatures.findById(candidatureId).orElseThrow(() -> new ResourceNotFoundException("Candidature introuvable"));
+        if (c.getStatut() != StatutCandidature.RETENUE)
+            throw new BusinessRuleException("Cette candidature n'est pas retenue.");
+        personnes.findById(c.getPersonneId()).orElseThrow(() -> new ResourceNotFoundException("Personne introuvable"));
+        if (expiration != null && expiration.isBefore(LocalDate.now()))
+            throw new BusinessRuleException("La date d'expiration est passée.");
+        if (propositions.findByCandidatureId(candidatureId).stream().anyMatch(x -> x.getStatut() == StatutProposition.ENVOYEE))
+            throw new BusinessRuleException("Une proposition est déjà active.");
+        PropositionEmbauche p = new PropositionEmbauche();
+        p.setCandidatureId(candidatureId);
+        p.setStatut(StatutProposition.ENVOYEE);
+        p.setDateEnvoi(LocalDateTime.now());
+        p.setDateExpiration(expiration);
+        p.setCommentaire(commentaire);
+        p.setCreatedBy(auteur);
+        p = propositions.save(p);
+        historique.save(new HistoriqueProposition(p.getId(), null, StatutProposition.ENVOYEE, auteur, commentaire));
+        return p;
+    }
+
+    @Transactional
+    public Employe accepter(Long id, String auteur) {
+        PropositionEmbauche p = propositions.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proposition introuvable"));
+        Candidature c = candidatures.findById(p.getCandidatureId()).orElseThrow(() -> new ResourceNotFoundException("Candidature introuvable"));
+        if (p.getStatut() == StatutProposition.ACCEPTEE) {
+            return employes.findByPersonneId(c.getPersonneId()).orElseThrow(() -> new BusinessRuleException("Proposition acceptée sans salarié."));
+        }
+        if (p.getStatut() != StatutProposition.ENVOYEE)
+            throw new BusinessRuleException("Cette proposition a déjà été traitée.");
+        if (p.getDateExpiration() != null && p.getDateExpiration().isBefore(LocalDate.now()))
+            throw new BusinessRuleException("Cette proposition est expirée.");
+        if (c.getStatut() != StatutCandidature.RETENUE)
+            throw new BusinessRuleException("Cette candidature n'est pas retenue.");
+        Personne person = personnes.findById(c.getPersonneId()).orElseThrow(() -> new ResourceNotFoundException("Personne introuvable"));
+        if (employes.findByPersonneId(person.getId()).isPresent())
+            throw new BusinessRuleException("Cette personne possède déjà un dossier salarié.");
+        p.setStatut(StatutProposition.ACCEPTEE);
+        p.setDateReponse(LocalDateTime.now());
+        propositions.save(p);
+        historique.save(new HistoriqueProposition(p.getId(), StatutProposition.ENVOYEE, StatutProposition.ACCEPTEE, auteur, null));
+        Employe e = new Employe();
+        e.setPersonneId(person.getId());
+        e.setMatricule(genererMatricule());
+        e.setDateEmbauche(LocalDate.now());
+        e.setStatut(StatutEmploye.ACTIF);
+        e = employes.save(e);
+        integration.demanderCreationInitiale(e, c.getId());
+        return e;
+    }
+
+    @Transactional
+    public PropositionEmbauche repondre(Long id, StatutProposition statut, String auteur) {
+        if (statut != StatutProposition.REFUSEE && statut != StatutProposition.EXPIREE)
+            throw new BusinessRuleException("Transition interdite.");
+        PropositionEmbauche p = propositions.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proposition introuvable"));
+        if (p.getStatut() != StatutProposition.ENVOYEE)
+            throw new BusinessRuleException("Cette proposition a déjà été traitée.");
+        p.setStatut(statut);
+        p.setDateReponse(LocalDateTime.now());
+        p = propositions.save(p);
+        historique.save(new HistoriqueProposition(id, StatutProposition.ENVOYEE, statut, auteur, null));
+        return p;
+    }
+
+    private String genererMatricule() {
+        String m;
+        do {
+            m = "EMP-" + UUID.randomUUID().toString().replace("-", "").substring(0, 12).toUpperCase();
+        } while (employes.findByMatricule(m).isPresent());
+        return m;
+    }
+
+    public PropositionEmbauche get(Long id) {
+        return propositions.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proposition introuvable"));
+    }
+
+    public List<PropositionEmbauche> list() {
+        return propositions.findAll();
+    }
+
+    public List<HistoriqueProposition> historique(Long id) {
+        get(id);
+        return historique.findByPropositionIdOrderByDateTransitionAsc(id);
+    }
+}
