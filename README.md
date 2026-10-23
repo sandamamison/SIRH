@@ -41,17 +41,16 @@ Dans un terminal PostgreSQL (`psql`) :
 CREATE DATABASE sirh;
 ```
 
-Appliquer le schéma SQL du Bloc 1 :
+Appliquer le schéma complet utilisé par l'application. **Cette commande supprime
+et recrée les 17 tables du périmètre applicatif** :
 
 ```bash
-psql -U postgres -d sirh -f sirh_conception/bloc1.sql
+psql -U postgres -d sirh -f sql/base_complete.sql
 ```
 
-*(Optionnel)* Charger un jeu d'essai minimal pour tester l'API :
-
-```bash
-psql -U postgres -d sirh -f sirh_conception/bloc1_donnees_test.sql
-```
+Le script ne modifie pas les éventuelles tables qui ne font pas partie de ce
+périmètre. Les anciens scripts de données de test par bloc ne sont pas inclus
+dans cette réinitialisation complète.
 
 ### B. Configurer l'application locale
 
