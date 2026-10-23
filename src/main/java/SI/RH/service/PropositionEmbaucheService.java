@@ -5,6 +5,7 @@ import SI.RH.entity.enums.*;
 import SI.RH.exception.*;
 import SI.RH.repository.*;
 import SI.RH.service.port.ContratAffectationPort;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,15 +19,29 @@ public class PropositionEmbaucheService {
     private final PersonneRepository personnes;
     private final EmployeRepository employes;
     private final HistoriquePropositionRepository historique;
+    private final UtilisateurRepository utilisateurs;
     private final ContratAffectationPort integration;
 
-    public PropositionEmbaucheService(PropositionEmbaucheRepository p, CandidatureRepository c, PersonneRepository pe, EmployeRepository e, HistoriquePropositionRepository h, ContratAffectationPort i) {
+    @Autowired
+    public PropositionEmbaucheService(PropositionEmbaucheRepository p, CandidatureRepository c, PersonneRepository pe, EmployeRepository e, HistoriquePropositionRepository h, UtilisateurRepository u, ContratAffectationPort i) {
         propositions = p;
         candidatures = c;
         personnes = pe;
         employes = e;
         historique = h;
+        utilisateurs = u;
         integration = i;
+    }
+
+    /**
+     * Constructeur conserve pour les tests unitaires et les integrations
+     * qui instancient encore le service sans le depot des utilisateurs.
+     */
+    public PropositionEmbaucheService(PropositionEmbaucheRepository p, CandidatureRepository c,
+                                      PersonneRepository pe, EmployeRepository e,
+                                      HistoriquePropositionRepository h,
+                                      ContratAffectationPort i) {
+        this(p, c, pe, e, h, null, i);
     }
 
     @Transactional
@@ -54,8 +69,14 @@ public class PropositionEmbaucheService {
 
     @Transactional
     public Employe accepter(Long id, String auteur) {
+        return accepter(id, auteur, null);
+    }
+
+    @Transactional
+    public Employe accepter(Long id, String auteur, String username) {
         PropositionEmbauche p = propositions.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proposition introuvable"));
         Candidature c = candidatures.findById(p.getCandidatureId()).orElseThrow(() -> new ResourceNotFoundException("Candidature introuvable"));
+        verifierProprietaireCandidat(c, username);
         if (p.getStatut() == StatutProposition.ACCEPTEE) {
             return employes.findByPersonneId(c.getPersonneId()).orElseThrow(() -> new BusinessRuleException("Proposition acceptée sans salarié."));
         }
@@ -84,9 +105,16 @@ public class PropositionEmbaucheService {
 
     @Transactional
     public PropositionEmbauche repondre(Long id, StatutProposition statut, String auteur) {
+        return repondre(id, statut, auteur, null);
+    }
+
+    @Transactional
+    public PropositionEmbauche repondre(Long id, StatutProposition statut, String auteur, String username) {
         if (statut != StatutProposition.REFUSEE && statut != StatutProposition.EXPIREE)
             throw new BusinessRuleException("Transition interdite.");
         PropositionEmbauche p = propositions.findById(id).orElseThrow(() -> new ResourceNotFoundException("Proposition introuvable"));
+        Candidature c = candidatures.findById(p.getCandidatureId()).orElseThrow(() -> new ResourceNotFoundException("Candidature introuvable"));
+        verifierProprietaireCandidat(c, username);
         if (p.getStatut() != StatutProposition.ENVOYEE)
             throw new BusinessRuleException("Cette proposition a déjà été traitée.");
         p.setStatut(statut);
@@ -94,6 +122,18 @@ public class PropositionEmbaucheService {
         p = propositions.save(p);
         historique.save(new HistoriqueProposition(id, StatutProposition.ENVOYEE, statut, auteur, null));
         return p;
+    }
+
+    private void verifierProprietaireCandidat(Candidature candidature, String username) {
+        if (username == null) {
+            return;
+        }
+        Long personneId = utilisateurs.findByUsernameAndActifTrue(username)
+            .orElseThrow(() -> new BusinessRuleException("Compte candidat introuvable."))
+            .getPersonneid();
+        if (!personneId.equals(candidature.getPersonneId())) {
+            throw new BusinessRuleException("Cette proposition ne concerne pas votre candidature.");
+        }
     }
 
     private String genererMatricule() {

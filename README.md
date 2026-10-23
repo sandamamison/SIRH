@@ -52,6 +52,31 @@ Le script ne modifie pas les éventuelles tables qui ne font pas partie de ce
 périmètre. Les anciens scripts de données de test par bloc ne sont pas inclus
 dans cette réinitialisation complète.
 
+Charger ensuite les comptes de démonstration et leurs rôles :
+
+```bash
+psql -U postgres -d sirh -f sql/donnees_users.sql
+```
+
+Pour charger un scénario complet de démonstration avec départements, postes,
+demandes, offres, candidatures, entretiens, propositions, contrats et
+affectations :
+
+```bash
+psql -U postgres -d sirh -f sql/donnees_test_completes.sql
+```
+
+Ce dernier script est réservé aux tests et réinitialise les tables applicatives.
+
+Les comptes utilisent temporairement le mot de passe `password` :
+`admin`, `direction`, `rh`, `manager` et `candidat`. Ces mots de passe doivent
+être remplacés avant toute utilisation réelle.
+
+L'application utilise une page de connexion et une session sécurisée. Les rôles sont contrôlés par endpoint : la direction
+et l'administrateur ont un accès global, le RH gère le recrutement et les
+contrats, le manager crée et soumet des demandes, et le candidat répond aux
+propositions d'embauche.
+
 ### B. Configurer l'application locale
 
 Copier le modèle de configuration (non suivi par Git) :

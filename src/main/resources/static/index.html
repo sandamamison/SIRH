@@ -3,90 +3,212 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>SIRH — Pages de test</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>SIRH — Console de test</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <link rel="stylesheet" href="styles.css?v=202610231005">
 </head>
 <body>
   <header class="topbar">
     <div>
-      <p class="eyebrow">SIRH · Bloc 3</p>
-      <h1>Console de test</h1>
+      <p class="eyebrow">SIRH · console métier</p>
+      <h1>Centre de pilotage RH</h1>
+      <p class="subtitle">Testez les pages, les rôles et les endpoints de chaque module.</p>
     </div>
-    <button id="refresh-button" class="button button-light" type="button">Rafraîchir</button>
+    <div class="topbar-actions">
+      <button id="refresh-button" class="button button-light">Actualiser</button>
+      <button id="logout-button" class="button button-danger">Déconnexion</button>
+    </div>
   </header>
 
-  <main class="layout">
-    <section class="card">
-      <div class="section-heading">
-        <div>
-          <p class="eyebrow">Propositions d'embauche</p>
-          <h2>Suivi des propositions</h2>
-        </div>
-        <span id="proposition-count" class="counter">0</span>
-      </div>
+  <div class="shell">
+    <nav id="navigation" class="sidebar" aria-label="Modules">
+      <button class="nav-item active" data-page="dashboard">Tableau de bord</button>
+      <button class="nav-item" data-page="organisation">Organisation</button>
+      <button class="nav-item" data-page="recrutement">Recrutement</button>
+      <button class="nav-item" data-page="candidatures">Candidatures</button>
+      <button class="nav-item" data-page="entretiens">Entretiens</button>
+      <button class="nav-item" data-page="embauche">Embauche</button>
+      <button class="nav-item" data-page="carriere">Contrats & affectations</button>
+      <button class="nav-item" data-page="acces">Utilisateurs & accès</button>
+    </nav>
+
+    <main class="content">
       <div id="message" class="message" role="status" aria-live="polite"></div>
-      <div id="propositions" class="proposition-list">
-        <p class="muted">Chargement des propositions…</p>
-      </div>
-    </section>
 
-    <aside class="card">
-      <p class="eyebrow">Test API</p>
-      <h2>Créer une proposition</h2>
-      <form id="create-form">
-        <label for="candidature-id">ID candidature</label>
-        <input id="candidature-id" name="candidatureId" type="number" min="1" required>
-
-        <label for="expiration">Date d'expiration</label>
-        <input id="expiration" name="dateExpiration" type="date">
-
-        <label for="created-by">Créée par</label>
-        <input id="created-by" name="createdBy" type="text" maxlength="120" placeholder="RH / utilisateur">
-
-        <label for="commentaire">Commentaire</label>
-        <textarea id="commentaire" name="commentaire" rows="3" maxlength="500"></textarea>
-
-        <button class="button button-primary" type="submit">Envoyer la proposition</button>
-      </form>
-    </aside>
-
-    <section class="card">
-      <p class="eyebrow">Employés</p>
-      <h2>Rechercher un employé</h2>
-      <form id="employee-form" class="inline-form">
-        <label class="sr-only" for="employee-id">ID employé</label>
-        <input id="employee-id" type="number" min="1" required placeholder="ID employé">
-        <button class="button button-secondary" type="submit">Rechercher</button>
-      </form>
-      <div id="employee-result" class="result empty">Aucun employé recherché.</div>
-    </section>
-  </main>
-
-  <dialog id="detail-dialog">
-    <div class="dialog-heading">
-      <h2>Détail de la proposition</h2>
-      <button id="close-dialog" class="icon-button" type="button" aria-label="Fermer">×</button>
-    </div>
-    <div id="proposition-detail"></div>
-    <h3>Historique</h3>
-    <div id="proposition-history" class="history"></div>
-  </dialog>
-
-  <template id="proposition-template">
-    <article class="proposition">
-      <div class="proposition-main">
-        <div>
-          <span class="status"></span>
-          <h3 class="proposition-title"></h3>
-          <p class="muted proposition-meta"></p>
+      <section class="page active" data-page-content="dashboard">
+        <div class="page-heading"><div><p class="eyebrow">Vue générale</p><h2>Tableau de bord</h2></div></div>
+        <div class="stats">
+          <article class="stat"><strong id="stat-departements">—</strong><span>Départements</span></article>
+          <article class="stat"><strong id="stat-postes">—</strong><span>Postes</span></article>
+          <article class="stat"><strong id="stat-demandes">—</strong><span>Demandes</span></article>
+          <article class="stat"><strong id="stat-offres">—</strong><span>Offres</span></article>
+          <article class="stat"><strong id="stat-candidatures">—</strong><span>Candidatures</span></article>
+          <article class="stat"><strong id="stat-propositions">—</strong><span>Propositions</span></article>
         </div>
-        <button class="button button-light detail-button" type="button">Détails</button>
-      </div>
-      <p class="commentaire"></p>
-      <div class="actions"></div>
-    </article>
-  </template>
+        <div class="card">
+          <h3>Scénario de test conseillé</h3>
+          <ol class="steps">
+            <li>Connectez-vous avec <code>manager / password</code> et créez une demande.</li>
+            <li>Utilisez <code>rh / password</code> pour valider, créer une offre et traiter les candidatures.</li>
+            <li>Utilisez <code>candidat / password</code> pour accepter ou refuser sa proposition.</li>
+            <li>Utilisez <code>direction / password</code> pour contrôler les validations et contrats.</li>
+          </ol>
+        </div>
+      </section>
 
-  <script src="app.js"></script>
+      <section class="page" data-page-content="organisation">
+        <div class="page-heading"><div><p class="eyebrow">Structure</p><h2>Organisation</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Départements</h3><div id="list-departements" class="data-list"></div></div>
+          <div class="card"><h3>Postes</h3><div id="list-postes" class="data-list"></div></div>
+        </div>
+        <div class="card"><h3>Créer un département</h3><form data-action="create-departement" class="business-form">
+          <div class="form-grid"><label>Code<input name="codeDepartement" required maxlength="20"></label><label>Nom<input name="nomDepartement" required maxlength="100"></label></div>
+          <label>Description<textarea name="description" rows="2"></textarea></label>
+          <label>Responsable (ID)<input name="employeResponsableId" type="number" min="1"></label>
+          <button class="button button-primary">Créer le département</button>
+        </form></div>
+        <div class="card"><h3>Créer un poste</h3><form data-action="create-poste" class="business-form">
+          <div class="form-grid"><label>Code<input name="codePoste" required maxlength="30"></label><label>Titre<input name="titre" required maxlength="100"></label></div>
+          <label>Mission<textarea name="descriptionMission" rows="2"></textarea></label>
+          <div class="form-grid"><label>Salaire min<input name="salaireMin" type="number" min="0"></label><label>Salaire max<input name="salaireMax" type="number" min="0"></label></div>
+          <label>Département (ID)<input name="departementId" type="number" min="1" required></label>
+          <button class="button button-primary">Créer le poste</button>
+        </form></div>
+      </section>
+
+      <section class="page" data-page-content="recrutement">
+        <div class="page-heading"><div><p class="eyebrow">Acquisition des talents</p><h2>Recrutement</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Demandes de recrutement</h3><div id="list-demandes" class="data-list"></div></div>
+          <div class="card"><h3>Offres d'emploi</h3><div id="list-offres" class="data-list"></div></div>
+          <div class="card"><h3>Créer une demande</h3><form data-action="create-demande" class="business-form">
+            <div class="form-grid"><label>Poste (ID)<input name="posteId" type="number" min="1" required></label><label>Demandeur (ID)<input name="employeDemandeurId" type="number" min="1" required></label></div>
+            <div class="form-grid"><label>Motif<select name="motif"><option>CREATION</option><option>REMPLACEMENT</option></select></label><label>Effectif<input name="effectifDemande" type="number" min="1" value="1" required></label></div>
+            <label>Budget prévu<input name="budgetPrevu" type="number" min="1" required></label><label>Date souhaitée<input name="dateSouhaitee" type="date" required></label>
+            <label>Justification<textarea name="justification" rows="2" required></textarea></label>
+            <label>Employé remplacé (ID)<input name="employeRemplaceId" type="number" min="1"></label>
+            <button class="button button-primary">Créer la demande</button>
+          </form></div>
+          <div class="card"><h3>Créer une offre</h3><form data-action="create-offre" class="business-form">
+            <div class="form-grid"><label>Demande (ID)<input name="demandeRecrutementId" type="number" min="1" required></label><label>Titre<input name="titreOffre" required></label></div>
+            <label>Description<textarea name="description" rows="2" required></textarea></label><div class="form-grid"><label>Salaire<input name="salairePropose" type="number" min="1"></label><label>Lieu<input name="lieuTravail" required></label></div>
+            <label>Horaires<input name="horairesTravail"></label><div class="form-grid"><label>Publication<input name="datePublication" type="date"></label><label>Action<select name="action"><option>CREER</option><option>PUBLIER</option></select></label></div>
+            <label>Employé acteur (ID)<input name="employeActeurId" type="number" min="1" required></label>
+            <button class="button button-primary">Créer l'offre</button>
+          </form></div>
+          <div class="card"><h3>Créer une candidature</h3><form data-action="create-candidature" class="business-form">
+            <div class="form-grid"><label>Offre (ID)<input name="offreEmploiId" type="number" min="1" required></label><label>Personne (ID)<input name="personneId" type="number" min="1" required></label></div>
+            <label>CV / URL<input name="cvUrl"></label><label>Lettre de motivation<textarea name="lettreMotivation" rows="3"></textarea></label><label>Prétention salariale<input name="pretentionSalariale" type="number" min="1"></label>
+            <button class="button button-primary">Candidater</button>
+          </form></div>
+        </div>
+      </section>
+
+      <section class="page" data-page-content="candidatures">
+        <div class="page-heading"><div><p class="eyebrow">Suivi des candidats</p><h2>Candidatures</h2></div></div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Candidatures reçues</h3>
+            <p class="muted">Consultez les candidatures enregistrées et leur état d'avancement.</p>
+            <div id="list-candidatures" class="data-list"></div>
+          </div>
+          <div class="card">
+            <h3>Déposer une candidature</h3>
+            <form data-action="create-candidature" class="business-form">
+              <div class="form-grid">
+                <label>Offre d'emploi (ID)
+                  <input name="offreEmploiId" type="number" min="1" required>
+                </label>
+                <label>Candidat (ID)
+                  <input name="personneId" type="number" min="1" required>
+                </label>
+              </div>
+              <label>CV / URL
+                <input name="cvUrl" type="url" placeholder="https://...">
+              </label>
+              <label>Lettre de motivation
+                <textarea name="lettreMotivation" rows="5" required></textarea>
+              </label>
+              <div class="form-grid">
+                <label>Prétention salariale
+                  <input name="pretentionSalariale" type="number" min="0" step="1">
+                </label>
+                <label>Accord salarial
+                  <select name="accordSalaire">
+                    <option value="">Non précisé</option>
+                    <option value="true">Oui</option>
+                    <option value="false">Non</option>
+                  </select>
+                </label>
+              </div>
+              <button class="button button-primary" type="submit">Enregistrer la candidature</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <section class="page" data-page-content="entretiens">
+        <div class="page-heading"><div><p class="eyebrow">Évaluation</p><h2>Entretiens & évaluations</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Entretiens</h3><div id="list-entretiens" class="data-list"></div></div>
+          <div class="card"><h3>Évaluations</h3><div id="list-evaluations" class="data-list"></div></div>
+          <div class="card"><h3>Planifier un entretien</h3><form data-action="create-entretien" class="business-form">
+            <label>Candidature (ID)<input name="candidatureId" type="number" min="1" required></label><label>Date et heure<input name="dateHeure" type="datetime-local" required></label><label>Lieu ou lien<input name="lieuOuLien"></label><label>Type<select name="typeEntretien"><option>RH</option><option>TECHNIQUE</option><option>DIRECTION</option><option>TEST</option></select></label>
+            <button class="button button-primary">Planifier</button>
+          </form></div>
+          <div class="card"><h3>Ajouter une évaluation</h3><form data-action="create-evaluation" class="business-form">
+            <div class="form-grid"><label>Entretien (ID)<input name="entretienId" type="number" min="1" required></label><label>Évaluateur (ID)<input name="employeEvaluateurId" type="number" min="1" required></label></div><div class="form-grid"><label>Score / 20<input name="scoreGlobal" type="number" min="0" max="20"></label><label>Avis<select name="avis"><option>FAVORABLE</option><option>RESERVE</option><option>DEFAVORABLE</option></select></label></div><label>Points forts<textarea name="pointsForts" rows="2"></textarea></label><label>Points faibles<textarea name="pointsFaibles" rows="2"></textarea></label>
+            <button class="button button-primary">Évaluer</button>
+          </form></div>
+        </div>
+      </section>
+
+      <section class="page" data-page-content="embauche">
+        <div class="page-heading"><div><p class="eyebrow">Sélection</p><h2>Propositions d'embauche</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Propositions</h3><div id="list-propositions" class="data-list"></div></div>
+          <div class="card"><h3>Envoyer une proposition</h3><form data-action="create-proposition" class="business-form">
+            <label>Candidature (ID)<input name="candidatureId" type="number" min="1" required></label><label>Date d'expiration<input name="dateExpiration" type="date"></label><label>Commentaire<textarea name="commentaire" rows="2"></textarea></label><label>Créée par<input name="createdBy" value="rh"></label>
+            <button class="button button-primary">Envoyer</button>
+          </form></div>
+        </div>
+      </section>
+
+      <section class="page" data-page-content="carriere">
+        <div class="page-heading"><div><p class="eyebrow">Administration RH</p><h2>Contrats & affectations</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Contrats</h3><div id="list-contrats" class="data-list"></div></div>
+          <div class="card"><h3>Affectations</h3><div id="list-affectations" class="data-list"></div></div>
+          <div class="card"><h3>Créer un contrat</h3><form data-action="create-contrat" class="business-form">
+            <div class="form-grid"><label>Employé (ID)<input name="employeId" type="number" min="1" required></label><label>Type<select name="typeContrat"><option>CE</option><option>CDD</option><option>CDI</option></select></label></div><div class="form-grid"><label>Début<input name="dateDebut" type="date" required></label><label>Fin<input name="dateFin" type="date"></label></div><label>Salaire brut<input name="salaireBrut" type="number" min="1" required></label><label>Créateur (ID)<input name="employeCreateurId" type="number" min="1" required></label>
+            <button class="button button-primary">Créer</button>
+          </form></div>
+          <div class="card"><h3>Créer une affectation</h3><form data-action="create-affectation" class="business-form">
+            <div class="form-grid"><label>Employé (ID)<input name="employeId" type="number" min="1" required></label><label>Poste (ID)<input name="posteId" type="number" min="1" required></label></div><div class="form-grid"><label>Début<input name="dateDebut" type="date" required></label><label>Fin<input name="dateFin" type="date"></label></div>
+            <button class="button button-primary">Affecter</button>
+          </form></div>
+        </div>
+      </section>
+
+      <section class="page" data-page-content="acces">
+        <div class="page-heading"><div><p class="eyebrow">Contrôle d'accès</p><h2>Utilisateurs & rôles</h2></div></div>
+        <div class="card">
+          <p>Les comptes sont chargés par le script <code>sql/donnees_users.sql</code>. L'authentification utilise une session sécurisée.</p>
+          <div class="roles">
+            <span><b>admin</b> · accès complet</span><span><b>direction</b> · direction</span>
+            <span><b>rh</b> · recrutement et contrats</span><span><b>manager</b> · demandes</span>
+            <span><b>candidat</b> · réponse à sa proposition</span>
+          </div>
+          <p class="muted">Mot de passe de test : <code>password</code>. Rechargez la page après chaque changement de compte.</p>
+        </div>
+        <div class="card">
+          <h3>Accès à l'application</h3>
+          <p class="muted">Les opérations se font maintenant avec les formulaires métier de chaque module. Les résultats sont présentés sous forme de fiches lisibles.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+  <script src="app.js?v=202610231005"></script>
 </body>
 </html>

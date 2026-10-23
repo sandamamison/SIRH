@@ -1,198 +1,170 @@
-const API_BASE = '/api';
-const elements = {
-  list: document.querySelector('#propositions'),
-  count: document.querySelector('#proposition-count'),
-  message: document.querySelector('#message'),
-  createForm: document.querySelector('#create-form'),
-  employeeForm: document.querySelector('#employee-form'),
-  employeeResult: document.querySelector('#employee-result'),
-  refresh: document.querySelector('#refresh-button'),
-  dialog: document.querySelector('#detail-dialog'),
-  detail: document.querySelector('#proposition-detail'),
-  history: document.querySelector('#proposition-history'),
-  closeDialog: document.querySelector('#close-dialog'),
-  template: document.querySelector('#proposition-template')
-};
-
-const state = { propositions: [] };
+const API = '/api';
+const message = document.querySelector('#message');
+const labels = { departements: 'Départements', postes: 'Postes', demandes: 'Demandes', offres: 'Offres', candidatures: 'Candidatures', entretiens: 'Entretiens', evaluations: 'Évaluations', propositions: 'Propositions', contrats: 'Contrats', affectations: 'Affectations' };
 
 async function request(path, options = {}) {
-  const response = await fetch(`${API_BASE}${path}`, {
-    headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
-    ...options
-  });
-  const contentType = response.headers.get('content-type') || '';
-  const body = contentType.includes('application/json')
-    ? await response.json()
-    : await response.text();
-  if (!response.ok) {
-    const detail = typeof body === 'string' ? body : body.message || JSON.stringify(body);
-    throw new Error(`${response.status} — ${detail || 'La requête a échoué.'}`);
-  }
+  const response = await fetch(`${API}${path}`, { headers: { 'Content-Type': 'application/json' }, ...options });
+  const type = response.headers.get('content-type') || '';
+  const body = type.includes('json') ? await response.json() : await response.text();
+  if (!response.ok) throw new Error(`${response.status} — ${typeof body === 'string' ? body : body.message || JSON.stringify(body)}`);
   return body;
 }
 
+function notify(text, type = '') { message.textContent = text; message.className = `message ${type}`; }
 function formatDate(value) {
   if (!value) return '—';
   return new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium' }).format(new Date(value));
 }
 
-function formatDateTime(value) {
-  if (!value) return '—';
-  return new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value));
-}
-
-function showMessage(text, type = '') {
-  elements.message.textContent = text;
-  elements.message.className = `message ${type}`;
-}
-
-function actionButton(label, action, id) {
-  const button = document.createElement('button');
-  button.className = 'button button-small';
-  button.type = 'button';
-  button.textContent = label;
-  button.dataset.action = action;
-  button.dataset.id = id;
-  return button;
-}
-
-function renderPropositions() {
-  elements.count.textContent = state.propositions.length;
-  elements.list.replaceChildren();
-  if (!state.propositions.length) {
-    elements.list.innerHTML = '<p class="muted">Aucune proposition trouvée.</p>';
-    return;
+function displayValue(value, key) {
+  if (value === null || value === undefined || value === '') return '—';
+  if (key.toLowerCase().includes('date') || key.toLowerCase().includes('heure') || key.toLowerCase().endsWith('at')) {
+    return String(value).includes('T') ? new Intl.DateTimeFormat('fr-FR', { dateStyle: 'medium', timeStyle: 'short' }).format(new Date(value)) : formatDate(value);
   }
-  const fragment = document.createDocumentFragment();
-  state.propositions.forEach((proposition) => {
-    const node = elements.template.content.cloneNode(true);
-    const article = node.querySelector('.proposition');
-    const status = node.querySelector('.status');
-    status.textContent = proposition.statut || 'INCONNU';
-    status.classList.add((proposition.statut || '').toLowerCase());
-    node.querySelector('.proposition-title').textContent = `Proposition #${proposition.id}`;
-    node.querySelector('.proposition-meta').textContent =
-      `Candidature #${proposition.candidatureId} · envoyée le ${formatDateTime(proposition.dateEnvoi)}`;
-    node.querySelector('.commentaire').textContent = proposition.commentaire || 'Aucun commentaire.';
-    node.querySelector('.detail-button').dataset.id = proposition.id;
-    const actions = node.querySelector('.actions');
-    if (proposition.statut === 'ENVOYEE') {
-      actions.append(actionButton('Accepter', 'accepter', proposition.id));
-      actions.append(actionButton('Refuser', 'refuser', proposition.id));
-      actions.append(actionButton('Expirer', 'expirer', proposition.id));
-    }
-    article.dataset.id = proposition.id;
-    fragment.append(node);
-  });
-  elements.list.append(fragment);
+  return String(value);
 }
 
-async function loadPropositions() {
-  elements.list.innerHTML = '<p class="muted">Chargement des propositions…</p>';
-  try {
-    state.propositions = await request('/propositions-embauche');
-    renderPropositions();
-    showMessage('');
-  } catch (error) {
-    state.propositions = [];
-    renderPropositions();
-    showMessage(`Impossible de charger les propositions : ${error.message}`, 'error');
-  }
-}
+function pretty(value) { return typeof value === 'string' ? value : JSON.stringify(value, null, 2); }
 
-async function submitCreation(event) {
-  event.preventDefault();
-  const data = new FormData(elements.createForm);
-  const payload = {
-    candidatureId: Number(data.get('candidatureId')),
-    dateExpiration: data.get('dateExpiration') || null,
-    commentaire: data.get('commentaire') || null,
-    createdBy: data.get('createdBy') || null
-  };
-  try {
-    await request('/propositions-embauche', {
-      method: 'POST',
-      body: JSON.stringify(payload)
-    });
-    elements.createForm.reset();
-    showMessage('Proposition créée avec succès.', 'success');
-    await loadPropositions();
-  } catch (error) {
-    showMessage(`Création impossible : ${error.message}`, 'error');
-  }
-}
+const visibleFields = {
+  departements: ['id', 'codeDepartement', 'nomDepartement', 'description'],
+  postes: ['id', 'codePoste', 'titre', 'salaireMin', 'salaireMax', 'departementId'],
+  demandes: ['id', 'motif', 'statut', 'budgetPrevu', 'dateSouhaitee', 'posteId'],
+  offres: ['id', 'titreOffre', 'statut', 'lieuTravail', 'salairePropose', 'datePublication'],
+  candidatures: ['id', 'offreEmploiId', 'personneId', 'statut', 'dateCandidature'],
+  entretiens: ['id', 'candidatureId', 'dateHeure', 'typeEntretien', 'statut'],
+  evaluations: ['id', 'entretienId', 'employeEvaluateurId', 'scoreGlobal', 'avis'],
+  propositions: ['id', 'candidatureId', 'statut', 'dateEnvoi', 'dateExpiration', 'createdBy'],
+  contrats: ['id', 'numeroContrat', 'employeId', 'typeContrat', 'dateDebut', 'dateFin', 'salaireBrut', 'statut'],
+  affectations: ['id', 'employeId', 'posteId', 'dateDebut', 'dateFin']
+};
 
-async function updateProposition(id, action) {
-  const author = window.prompt("Auteur de l'action (facultatif) :", '') || '';
-  try {
-    await request(`/propositions-embauche/${id}/${action}?auteur=${encodeURIComponent(author)}`, { method: 'POST' });
-    showMessage(`Action « ${action} » effectuée sur la proposition #${id}.`, 'success');
-    await loadPropositions();
-  } catch (error) {
-    showMessage(`Action impossible : ${error.message}`, 'error');
-  }
-}
+const fieldLabels = {
+  id: 'Identifiant', codeDepartement: 'Code', nomDepartement: 'Nom', description: 'Description',
+  codePoste: 'Code', titre: 'Titre', salaireMin: 'Salaire minimum', salaireMax: 'Salaire maximum',
+  departementId: 'Département', motif: 'Motif', statut: 'Statut', budgetPrevu: 'Budget prévu',
+  dateSouhaitee: 'Date souhaitée', posteId: 'Poste', titreOffre: 'Titre', lieuTravail: 'Lieu',
+  salairePropose: 'Salaire proposé', datePublication: 'Publication', offreEmploiId: 'Offre',
+  personneId: 'Candidat', dateCandidature: 'Candidature', candidatureId: 'Candidature',
+  dateHeure: 'Date et heure', typeEntretien: 'Type', entretienId: 'Entretien',
+  employeEvaluateurId: 'Évaluateur', scoreGlobal: 'Score', avis: 'Avis', dateEnvoi: 'Envoi',
+  dateExpiration: 'Expiration', createdBy: 'Créateur', numeroContrat: 'N° contrat',
+  employeId: 'Employé', typeContrat: 'Type', dateDebut: 'Début', dateFin: 'Fin',
+  salaireBrut: 'Salaire brut'
+};
 
-async function showDetails(id) {
-  try {
-    const [proposition, history] = await Promise.all([
-      request(`/propositions-embauche/${id}`),
-      request(`/propositions-embauche/${id}/historique`)
-    ]);
-    elements.detail.innerHTML = `
-      <dl class="details">
-        <dt>Statut</dt><dd><span class="status ${(proposition.statut || '').toLowerCase()}">${proposition.statut || '—'}</span></dd>
-        <dt>Candidature</dt><dd>#${proposition.candidatureId ?? '—'}</dd>
-        <dt>Date d'envoi</dt><dd>${formatDateTime(proposition.dateEnvoi)}</dd>
-        <dt>Date d'expiration</dt><dd>${formatDate(proposition.dateExpiration)}</dd>
-        <dt>Date de réponse</dt><dd>${formatDateTime(proposition.dateReponse)}</dd>
-        <dt>Créée par</dt><dd>${proposition.createdBy || '—'}</dd>
-        <dt>Commentaire</dt><dd>${proposition.commentaire || '—'}</dd>
-      </dl>`;
-    elements.history.replaceChildren();
-    if (!history.length) {
-      elements.history.innerHTML = '<p class="muted">Aucun événement enregistré.</p>';
-    } else {
-      history.forEach((event) => {
-        const item = document.createElement('p');
-        item.textContent = JSON.stringify(event);
-        elements.history.append(item);
-      });
-    }
-    elements.dialog.showModal();
-  } catch (error) {
-    showMessage(`Détail indisponible : ${error.message}`, 'error');
-  }
-}
-
-async function searchEmployee(event) {
-  event.preventDefault();
-  const id = document.querySelector('#employee-id').value;
-  elements.employeeResult.className = 'result';
-  elements.employeeResult.textContent = 'Recherche en cours…';
-  try {
-    const employee = await request(`/employes/${id}`);
-    elements.employeeResult.innerHTML = `
-      <strong>Employé #${employee.id}</strong>
-      <span>Matricule : ${employee.matricule || '—'}</span>
-      <span>Personne : #${employee.personneId ?? '—'}</span>
-      <span>Embauche : ${formatDate(employee.dateEmbauche)}</span>
-      <span>Statut : ${employee.statut || '—'}</span>`;
-  } catch (error) {
-    elements.employeeResult.className = 'result error';
-    elements.employeeResult.textContent = `Employé introuvable : ${error.message}`;
-  }
-}
-
-elements.list.addEventListener('click', (event) => {
-  const target = event.target.closest('[data-action], .detail-button');
+function renderList(id, values) {
+  const target = document.querySelector(`#list-${id}`);
   if (!target) return;
-  if (target.dataset.action) updateProposition(target.dataset.id, target.dataset.action);
-  else showDetails(target.dataset.id);
+  target.replaceChildren();
+  if (!Array.isArray(values) || !values.length) { target.innerHTML = '<span class="muted">Aucune donnée.</span>'; return; }
+  values.forEach(value => {
+    const item = document.createElement('article');
+    item.className = 'data-item';
+    const fields = visibleFields[id] || Object.keys(value).slice(0, 6);
+    fields.filter(key => Object.prototype.hasOwnProperty.call(value, key)).forEach(key => {
+      const row = document.createElement('span');
+      const label = document.createElement('b');
+      const content = document.createElement('em');
+      label.textContent = fieldLabels[key] || key;
+      content.textContent = displayValue(value[key], key);
+      row.append(label, content);
+      item.append(row);
+    });
+    target.append(item);
+  });
+}
+
+const resourcePaths = {
+  departements: '/departements',
+  postes: '/postes',
+  demandes: '/demandes',
+  offres: '/offres',
+  candidatures: '/candidatures',
+  entretiens: '/entretiens',
+  evaluations: '/evaluations',
+  propositions: '/propositions-embauche',
+  contrats: '/contrats?employeId=1',
+  affectations: '/affectations?employeId=1'
+};
+
+async function loadResource(resource) {
+  try {
+    const value = await request(resourcePaths[resource]);
+    renderList(resource, value);
+    const stat = document.querySelector(`#stat-${resource}`);
+    if (stat) stat.textContent = Array.isArray(value) ? value.length : '1';
+  } catch (error) {
+    renderList(resource, []);
+    const stat = document.querySelector(`#stat-${resource}`);
+    if (stat) stat.textContent = '—';
+  }
+}
+
+async function refresh() {
+  await Promise.all(Object.keys(labels).map(loadResource));
+  notify('Données actualisées.', 'success');
+}
+
+function actionPath(action) {
+  return {
+    'create-departement': ['/departements', 'POST'],
+    'create-poste': ['/postes', 'POST'],
+    'create-demande': ['/demandes', 'POST'],
+    'create-offre': ['/offres', 'POST'],
+    'create-candidature': ['/candidatures', 'POST'],
+    'create-entretien': ['/entretiens', 'POST'],
+    'create-evaluation': ['/evaluations', 'POST'],
+    'create-proposition': ['/propositions-embauche', 'POST'],
+    'create-contrat': ['/contrats', 'POST'],
+    'create-affectation': ['/affectations', 'POST']
+  }[action];
+}
+
+async function submitForm(form) {
+  const action = form.dataset.action;
+  const [path, method] = actionPath(action);
+  const body = {};
+  new FormData(form).forEach((value, key) => {
+    if (value === '') return;
+    body[key] = key === 'accordSalaire' ? value === 'true' : ['posteId', 'employeDemandeurId', 'employeRemplaceId', 'effectifDemande', 'budgetPrevu',
+      'employeResponsableId', 'departementId', 'salaireMin', 'salaireMax', 'offreEmploiId', 'personneId',
+      'pretentionSalariale', 'candidatureId', 'entretienId', 'employeEvaluateurId', 'scoreGlobal',
+      'employeId', 'employeCreateurId', 'salaireBrut'].includes(key) ? Number(value) : value;
+  });
+  if (action === 'create-offre') {
+    const actionValue = body.action;
+    delete body.action;
+    const acteur = body.employeActeurId;
+    delete body.employeActeurId;
+    const offre = { ...body };
+    body.offre = offre;
+    body.offre.demandeRecrutementId = Number(body.offre.demandeRecrutementId);
+    body.action = { employeActeurId: Number(acteur), commentaire: null };
+    if (actionValue === 'PUBLIER') body.action.commentaire = 'Publication depuis la console';
+  }
+  await request(path, { method, body: JSON.stringify(body) });
+  notify('Opération effectuée avec succès.', 'success');
+  await refresh();
+}
+
+document.querySelector('#navigation').addEventListener('click', event => {
+  const button = event.target.closest('[data-page]');
+  if (!button) return;
+  document.querySelectorAll('.nav-item').forEach(item => item.classList.toggle('active', item === button));
+  document.querySelectorAll('.page').forEach(page => page.classList.toggle('active', page.dataset.pageContent === button.dataset.page));
 });
-elements.createForm.addEventListener('submit', submitCreation);
-elements.employeeForm.addEventListener('submit', searchEmployee);
-elements.refresh.addEventListener('click', loadPropositions);
-elements.closeDialog.addEventListener('click', () => elements.dialog.close());
-loadPropositions();
+document.querySelector('#refresh-button').addEventListener('click', refresh);
+document.querySelector('#logout-button').addEventListener('click', async () => {
+  try {
+    await fetch('/logout', { method: 'POST' });
+    window.location.href = '/login.html?logout=true';
+  } catch (error) {
+    notify(`Déconnexion impossible : ${error.message}`, 'error');
+  }
+});
+document.querySelectorAll('form[data-action]').forEach(form => form.addEventListener('submit', async event => {
+  event.preventDefault();
+  try { await submitForm(form); } catch (error) { notify(`Erreur : ${error.message}`, 'error'); }
+}));
+refresh();

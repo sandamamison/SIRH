@@ -6,6 +6,7 @@ import SI.RH.entity.enums.StatutProposition;
 import SI.RH.service.PropositionEmbaucheService;
 import org.springframework.http.*;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.*;
 
@@ -39,14 +40,14 @@ public class PropositionEmbaucheController {
     }
 
     @PostMapping("/{id}/accepter")
-    public EmployeResponse accept(@PathVariable Long id, @RequestParam(required = false) String auteur) {
-        Employe e = service.accepter(id, auteur);
+    public EmployeResponse accept(@PathVariable Long id, @RequestParam(required = false) String auteur, Authentication authentication) {
+        Employe e = service.accepter(id, auteur, authentication.getName());
         return new EmployeResponse(e.getId(), e.getMatricule(), e.getPersonneId(), e.getDateEmbauche(), e.getStatut());
     }
 
     @PostMapping("/{id}/refuser")
-    public PropositionResponse refuse(@PathVariable Long id, @RequestParam(required = false) String auteur) {
-        return toResponse(service.repondre(id, StatutProposition.REFUSEE, auteur));
+    public PropositionResponse refuse(@PathVariable Long id, @RequestParam(required = false) String auteur, Authentication authentication) {
+        return toResponse(service.repondre(id, StatutProposition.REFUSEE, auteur, authentication.getName()));
     }
 
     @PostMapping("/{id}/expirer")

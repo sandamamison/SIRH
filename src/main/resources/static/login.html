@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SIRH — Connexion</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="login-page">
+  <main class="login-card">
+    <p class="eyebrow">SIRH · espace sécurisé</p>
+    <h1>Connexion</h1>
+    <p class="muted">Connectez-vous pour accéder à votre espace RH.</p>
+    <p id="login-message" class="message error" hidden></p>
+    <p id="logout-message" class="message success" hidden>Vous êtes déconnecté.</p>
+    <form method="post" action="/login">
+      <label for="username">Identifiant</label>
+      <input id="username" name="username" type="text" autocomplete="username" required autofocus>
+      <label for="password">Mot de passe</label>
+      <input id="password" name="password" type="password" autocomplete="current-password" required>
+      <button class="button button-primary" type="submit">Se connecter</button>
+    </form>
+    <p class="login-hint">Compte de test : <code>admin</code> / <code>password</code></p>
+  </main>
+  <script>
+    const params = new URLSearchParams(window.location.search);
+    if (params.has('error')) {
+      const message = document.querySelector('#login-message');
+      message.hidden = false;
+      message.textContent = 'Identifiant ou mot de passe incorrect.';
+    }
+    if (params.has('logout')) document.querySelector('#logout-message').hidden = false;
+  </script>
+</body>
+</html>

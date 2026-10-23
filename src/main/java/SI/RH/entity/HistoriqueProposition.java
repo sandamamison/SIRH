@@ -11,14 +11,15 @@ public class HistoriqueProposition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(name = "proposition_id", nullable = false)
     private Long propositionId;
     @Enumerated(EnumType.STRING)
+    @Column(name = "ancien_statut")
     private StatutProposition ancienStatut;
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "nouveau_statut", nullable = false)
     private StatutProposition nouveauStatut;
-    @Column(nullable = false)
+    @Column(name = "date_transition", nullable = false)
     private LocalDateTime dateTransition;
     private String auteur;
     private String commentaire;

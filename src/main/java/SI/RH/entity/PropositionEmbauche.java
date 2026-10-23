@@ -16,11 +16,18 @@ public class PropositionEmbauche {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
     private StatutProposition statut;
-    private LocalDateTime dateEnvoi, dateReponse;
+    @Column(name = "date_envoi", nullable = false, updatable = false)
+    private LocalDateTime dateEnvoi;
+    @Column(name = "date_reponse")
+    private LocalDateTime dateReponse;
+    @Column(name = "date_expiration")
     private LocalDate dateExpiration;
-    private String commentaire, createdBy;
-    @Column(nullable = false, updatable = false)
+    private String commentaire;
+    @Column(name = "created_by")
+    private String createdBy;
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
+    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
     public PropositionEmbauche() {
