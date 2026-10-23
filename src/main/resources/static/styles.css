@@ -1,0 +1,61 @@
+:root {
+  color-scheme: light;
+  --ink: #172033;
+  --muted: #687386;
+  --line: #dfe4ec;
+  --surface: #fff;
+  --background: #f4f6fa;
+  --primary: #3157d5;
+  --success: #16835b;
+  --danger: #c83c4a;
+  --warning: #9b6a00;
+}
+* { box-sizing: border-box; }
+body { margin: 0; background: var(--background); color: var(--ink); font: 15px/1.5 system-ui, sans-serif; }
+.topbar { display: flex; justify-content: space-between; align-items: center; padding: 28px max(24px, calc((100% - 1100px) / 2)); background: #172653; color: white; }
+h1, h2, h3, p { margin-top: 0; }
+h1 { margin-bottom: 0; font-size: clamp(1.5rem, 3vw, 2.2rem); }
+h2 { margin-bottom: 18px; font-size: 1.25rem; }
+h3 { margin-bottom: 5px; font-size: 1rem; }
+.eyebrow { margin-bottom: 5px; color: #8190b4; font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.topbar .eyebrow { color: #aeb9dc; }
+.layout { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 20px; max-width: 1100px; margin: 28px auto; padding: 0 24px; }
+.card { padding: 24px; border: 1px solid var(--line); border-radius: 14px; background: var(--surface); box-shadow: 0 5px 18px #1720330b; }
+.card:nth-child(3) { grid-column: 1 / -1; }
+.section-heading, .proposition-main, .dialog-heading { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+.counter { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: #e9edff; color: var(--primary); font-weight: 700; }
+.proposition-list { display: grid; gap: 12px; }
+.proposition { padding: 16px; border: 1px solid var(--line); border-radius: 10px; }
+.proposition-meta, .muted { color: var(--muted); }
+.proposition-meta { margin-bottom: 0; font-size: .86rem; }
+.commentaire { margin: 12px 0; color: #465167; }
+.status { display: inline-block; margin-bottom: 5px; padding: 3px 8px; border-radius: 20px; background: #edf0f5; color: var(--muted); font-size: .72rem; font-weight: 700; }
+.status.envoyee { background: #fff1cd; color: var(--warning); }
+.status.acceptee { background: #d9f5e9; color: var(--success); }
+.status.refusee, .status.expiree { background: #ffe1e5; color: var(--danger); }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.button { border: 0; border-radius: 7px; padding: 10px 14px; cursor: pointer; font: inherit; font-weight: 650; }
+.button-primary { width: 100%; background: var(--primary); color: white; }
+.button-secondary { background: #e8edff; color: var(--primary); }
+.button-light { background: #eef1f6; color: var(--ink); }
+.button-small { padding: 6px 10px; background: #eef1f6; color: var(--ink); font-size: .82rem; }
+.topbar .button-light { color: white; background: #ffffff1c; }
+label { display: block; margin: 13px 0 5px; font-weight: 650; }
+input, textarea { width: 100%; border: 1px solid #cbd2de; border-radius: 7px; padding: 10px; color: var(--ink); font: inherit; }
+textarea { resize: vertical; }
+.inline-form { display: flex; gap: 10px; max-width: 480px; }
+.inline-form input { flex: 1; }
+.result { display: flex; flex-wrap: wrap; gap: 8px 18px; margin-top: 16px; padding: 14px; border-radius: 8px; background: #f5f7fb; }
+.result span { color: var(--muted); }
+.result.error, .message.error { color: var(--danger); }
+.message { min-height: 24px; margin-bottom: 8px; }
+.message.success { color: var(--success); }
+dialog { width: min(620px, calc(100% - 32px)); border: 0; border-radius: 14px; padding: 24px; color: var(--ink); box-shadow: 0 20px 70px #17203344; }
+dialog::backdrop { background: #17203388; }
+.icon-button { border: 0; background: transparent; color: var(--muted); cursor: pointer; font-size: 1.8rem; line-height: 1; }
+.details { display: grid; grid-template-columns: 150px 1fr; gap: 9px 16px; margin: 20px 0; }
+.details dt { color: var(--muted); font-weight: 650; }
+.details dd { margin: 0; }
+.history { max-height: 220px; overflow: auto; color: var(--muted); font-size: .85rem; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0, 0, 0, 0); }
+@media (max-width: 760px) { .layout { grid-template-columns: 1fr; } .card:nth-child(3) { grid-column: auto; } .inline-form { max-width: none; } }
