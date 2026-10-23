@@ -42,7 +42,7 @@ CREATE DATABASE sirh;
 ```
 
 Appliquer le schéma complet utilisé par l'application. **Cette commande supprime
-et recrée les 17 tables du périmètre applicatif** :
+et recrée les 19 tables du périmètre applicatif** :
 
 ```bash
 psql -U postgres -d sirh -f sql/base_complete.sql
