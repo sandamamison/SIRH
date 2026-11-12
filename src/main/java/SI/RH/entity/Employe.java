@@ -32,6 +32,9 @@ public class Employe {
     @Enumerated(EnumType.STRING)
     private StatutEmploye statut;
 
+    @Column
+    private Long departementId;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -86,6 +89,14 @@ public class Employe {
     }
 
     public void setStatut(String statut) { this.statut = statut == null ? null : StatutEmploye.valueOf(statut); }
+
+    public Long getDepartementId() {
+        return departementId;
+    }
+
+    public void setDepartementId(Long departementId) {
+        this.departementId = departementId;
+    }
 
     public LocalDateTime getCreatedAt() {
         return createdAt;
