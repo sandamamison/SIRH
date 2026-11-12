@@ -27,6 +27,9 @@ class ContratServiceTest {
     @Mock
     private ContratRepository contratRepository;
 
+    @Mock
+    private OnboardingService onboardingService;
+
     @InjectMocks
     private ContratService service;
 
@@ -169,7 +172,6 @@ class ContratServiceTest {
     void renouveler_succes_RG4_03() {
         when(contratRepository.findById(1)).thenReturn(Optional.of(contratSigne));
         when(contratRepository.existsByContratPrecedentId(1)).thenReturn(false);
-        when(contratRepository.existsChevauchement(any(), any(), any(), any())).thenReturn(false);
         when(contratRepository.existsByNumeroContrat(anyString())).thenReturn(false);
         when(contratRepository.save(any(Contrat.class))).thenAnswer(inv -> {
             Contrat c = inv.getArgument(0);
@@ -196,6 +198,7 @@ class ContratServiceTest {
     void signer_succes() {
         Contrat c = new Contrat();
         c.setId(5);
+        c.setEmployeId(10);
         c.setStatut(StatutContrat.CREE);
         when(contratRepository.findById(5)).thenReturn(Optional.of(c));
         when(contratRepository.save(any(Contrat.class))).thenReturn(c);
@@ -205,6 +208,7 @@ class ContratServiceTest {
         assertEquals(StatutContrat.SIGNE, resp.statut());
         assertEquals(200, resp.employeSignataireId());
         assertNotNull(resp.dateSignature());
+        verify(onboardingService).creerOnboardingAutomatique(10L);
     }
 
     @Test

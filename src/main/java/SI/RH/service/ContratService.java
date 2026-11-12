@@ -9,6 +9,7 @@ import SI.RH.entity.enums.TypeContrat;
 import SI.RH.exception.BusinessException;
 import SI.RH.exception.NotFoundException;
 import SI.RH.repository.ContratRepository;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,9 +23,11 @@ import java.util.Optional;
 public class ContratService {
 
     private final ContratRepository contratRepository;
+    private final OnboardingService onboardingService;
 
-    public ContratService(ContratRepository contratRepository) {
+    public ContratService(ContratRepository contratRepository, @Lazy OnboardingService onboardingService) {
         this.contratRepository = contratRepository;
+        this.onboardingService = onboardingService;
     }
 
     public ContratResponse creer(ContratRequest req) {
@@ -176,6 +179,11 @@ public class ContratService {
         }
 
         contratRepository.save(c);
+
+        if (cible == StatutContrat.SIGNE && onboardingService != null && c.getEmployeId() != null) {
+            // RG4-05 : déclenchement automatique de l'onboarding à la signature
+            onboardingService.creerOnboardingAutomatique(c.getEmployeId().longValue());
+        }
     }
 
     private void verifierCoherenceTypeDate(TypeContrat type, LocalDate dateFin) {
