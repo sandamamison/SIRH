@@ -5,17 +5,17 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "solde_conge",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"employe_id", "type_conge_id"}))
+       uniqueConstraints = @UniqueConstraint(columnNames = {"employeId", "typeCongeId"}))
 public class SoldeConge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "employe_id", nullable = false)
+    @Column(nullable = false)
     private Long employeId;
 
-    @Column(name = "type_conge_id", nullable = false)
+    @Column(nullable = false)
     private Long typeCongeId;
 
     @Column(nullable = false)

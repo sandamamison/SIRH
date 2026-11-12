@@ -155,13 +155,13 @@ VALUES
     (2, 2, 2, DATE '2024-02-01', NULL),
     (3, 3, 3, DATE '2024-03-01', NULL);
 
-INSERT INTO onboarding (id, employe_id, date_debut, statut)
+INSERT INTO onboarding (id, employeId, dateDebut, statut)
 VALUES
     (1, 1, DATE '2024-01-15', 'TERMINE'),
     (2, 2, DATE '2024-02-01', 'TERMINE'),
     (3, 3, DATE '2024-03-01', 'EN_COURS');
 
-INSERT INTO onboarding_tache (id, onboarding_id, libelle, responsable_id, echeance, statut, obligatoire)
+INSERT INTO onboarding_tache (id, onboardingId, libelle, responsableId, echeance, statut, obligatoire)
 VALUES
     (1, 3, 'Contrat signé', 2, DATE '2024-03-05', 'FAIT', TRUE),
     (2, 3, 'Badge d''accès', 2, DATE '2024-03-05', 'FAIT', TRUE),
@@ -170,62 +170,62 @@ VALUES
     (5, 3, 'Formation d''intégration', 2, DATE '2024-03-10', 'A_FAIRE', TRUE),
     (6, 3, 'Inscription à la paie', 2, DATE '2024-03-15', 'A_FAIRE', TRUE);
 
-INSERT INTO document (id, type_document, fichier_url, employe_id, contrat_id, date_depot, date_validite)
+INSERT INTO document (id, typeDocument, fichierUrl, employeId, contratId, dateDepot, dateValidite)
 VALUES
     (1, 'CONTRAT_SIGNE', '/uploads/contrats/ctr-emp001.pdf', 1, 1, DATE '2024-01-15', NULL),
     (2, 'PIECE_IDENTITE', '/uploads/id/cin-rakoto.pdf', 1, NULL, DATE '2024-01-15', DATE '2029-01-15'),
     (3, 'DIPLOME', '/uploads/diplomes/master-rakoto.pdf', 1, NULL, DATE '2024-01-15', NULL);
 
 -- 9. Bloc 5 : Journal d'audit
-INSERT INTO journal_audit (id, acteur_id, type_action, table_cible, enregistrement_id, detail, date_action)
+INSERT INTO journal_audit (id, acteurId, typeAction, tableCible, enregistrementId, detail, dateAction)
 VALUES
     (1, 1, 'CREATION', 'demandeRecrutement', 1, 'Création demande de recrutement pour DEV-BACK', TIMESTAMP '2026-10-10 08:30:00'),
     (2, 2, 'MODIFICATION', 'demandeRecrutement', 1, 'Validation RH de la demande 1', TIMESTAMP '2026-10-11 09:15:00'),
     (3, 2, 'CONSULTATION', 'employes', 1, 'Consultation du dossier administratif de EMP001', TIMESTAMP '2026-11-12 14:00:00');
 
 -- 10. Bloc 6 : Temps de travail et pointage
-INSERT INTO regime_travail (id, libelle, nb_heures_semaine)
+INSERT INTO regime_travail (id, libelle, nbHeuresSemaine)
 VALUES
     (1, 'Temps plein 40h', 40),
     (2, 'Temps plein 35h', 35);
 
-INSERT INTO horaire (id, libelle, heure_debut, heure_fin, pause_minutes)
+INSERT INTO horaire (id, libelle, heureDebut, heureFin, pauseMinutes)
 VALUES
     (1, 'Journée standard', TIME '08:00:00', TIME '17:00:00', 60),
     (2, 'Équipe du matin', TIME '06:00:00', TIME '14:00:00', 30);
 
-INSERT INTO planning (id, employe_id, horaire_id, semaine_debut, regime_travail_id)
+INSERT INTO planning (id, employeId, horaireId, semaineDebut, regimeTravailId)
 VALUES
     (1, 1, 1, DATE '2026-11-09', 1),
     (2, 2, 1, DATE '2026-11-09', 1),
     (3, 3, 1, DATE '2026-11-09', 1);
 
-INSERT INTO pointage (id, employe_id, direction, horodatage, origine, planning_id)
+INSERT INTO pointage (id, employeId, direction, horodatage, origine, planningId)
 VALUES
     (1, 1, 'ENTREE', TIMESTAMP '2026-11-12 07:55:00', 'BADGE', 1),
     (2, 1, 'SORTIE', TIMESTAMP '2026-11-12 17:05:00', 'BADGE', 1),
     (3, 2, 'ENTREE', TIMESTAMP '2026-11-12 08:10:00', 'APPLI', 2),
     (4, 2, 'SORTIE', TIMESTAMP '2026-11-12 17:00:00', 'APPLI', 2);
 
-INSERT INTO anomalie_pointage (id, employe_id, pointage_id, type_anomalie, description, statut)
+INSERT INTO anomalie_pointage (id, employeId, pointageId, typeAnomalie, description, statut)
 VALUES
     (1, 2, 3, 'RETARD', 'Pointage à 08h10 (horaire prévu 08h00)', 'DETECTEE');
 
 -- 11. Bloc 7 : Types de congés, droits, soldes, demandes et absences
-INSERT INTO type_conge (id, code, libelle, plafonne, duree_max_jours)
+INSERT INTO type_conge (id, code, libelle, plafonne, dureeMaxJours)
 VALUES
     (1, 'CA', 'Congé Payé Annuel', TRUE, 30),
     (2, 'RTT', 'Récupération Temps de Travail', TRUE, 12),
     (3, 'MALADIE', 'Congé Maladie', FALSE, NULL);
 
-INSERT INTO droit_conge (id, employe_id, type_conge_id, annee, jours_acquis)
+INSERT INTO droit_conge (id, employeId, typeCongeId, annee, joursAcquis)
 VALUES
     (1, 1, 1, 2026, 25.0),
     (2, 1, 2, 2026, 10.0),
     (3, 2, 1, 2026, 25.0),
     (4, 3, 1, 2026, 20.0);
 
-INSERT INTO solde_conge (id, employe_id, type_conge_id, solde_courant)
+INSERT INTO solde_conge (id, employeId, typeCongeId, soldeCourant)
 VALUES
     (1, 1, 1, 21.0),
     (2, 1, 2, 8.0),
@@ -233,12 +233,12 @@ VALUES
     (4, 3, 1, 20.0);
 
 INSERT INTO demande_conge
-    (id, employe_id, type_conge_id, date_debut, date_fin, statut, commentaire, validateur_manager_id, validateur_rh_id)
+    (id, employeId, typeCongeId, dateDebut, dateFin, statut, commentaire, validateurManagerId, validateurRhId)
 VALUES
     (1, 1, 1, DATE '2026-12-24', DATE '2026-12-31', 'VALIDEE_RH', 'Congés de fin d''année en famille', 1, 2),
     (2, 2, 1, DATE '2026-11-20', DATE '2026-11-24', 'SOUMISE', 'Repos prolongé', NULL, NULL);
 
-INSERT INTO absence (id, employe_id, type_absence, date_debut, date_fin, demande_conge_id, justifiee)
+INSERT INTO absence (id, employeId, typeAbsence, dateDebut, dateFin, demandeCongeId, justifiee)
 VALUES
     (1, 1, 'CONGE_ANNUEL', DATE '2026-12-24', DATE '2026-12-31', 1, TRUE);
 

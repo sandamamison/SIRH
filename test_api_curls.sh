@@ -37,7 +37,8 @@ curl -s -u rh:password "$BASE_URL/api/offres" | jq . || curl -s -u rh:password "
 echo -e "\n"
 
 echo "-> Candidatures pour l'offre 1 :"
-curl -s -u rh:password "$BASE_URL/api/candidatures/offre/1" | jq . || curl -s -u rh:password "$BASE_URL/api/candidatures/offre/1"
+echo "-> Liste de toutes les candidatures :"
+curl -s -u rh:password "$BASE_URL/api/candidatures" | jq . || curl -s -u rh:password "$BASE_URL/api/candidatures"
 echo -e "\n"
 
 echo "=========================================="
@@ -48,8 +49,8 @@ echo "-> Proposition d'embauche pour la candidature 1 :"
 curl -s -u rh:password "$BASE_URL/api/propositions-embauche/1" | jq . || curl -s -u rh:password "$BASE_URL/api/propositions-embauche/1"
 echo -e "\n"
 
-echo "-> Liste des salariés :"
-curl -s -u rh:password "$BASE_URL/api/employes" | jq . || curl -s -u rh:password "$BASE_URL/api/employes"
+echo "-> Salarié (ID 1) :"
+curl -s -u rh:password "$BASE_URL/api/employes/1" | jq . || curl -s -u rh:password "$BASE_URL/api/employes/1"
 echo -e "\n"
 
 echo "=========================================="

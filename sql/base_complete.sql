@@ -60,8 +60,8 @@ CREATE TABLE personnes
     email      VARCHAR(255) NOT NULL UNIQUE,
     telephone  VARCHAR(30),
     adresse    VARCHAR(255),
-    created_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
+    createdAt  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt  TIMESTAMP    NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE employes
@@ -71,8 +71,8 @@ CREATE TABLE employes
     personneid   BIGINT      NOT NULL UNIQUE REFERENCES personnes (id),
     dateembauche DATE        NOT NULL,
     statut       VARCHAR(50) NOT NULL DEFAULT 'ACTIF',
-    created_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    createdAt    TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt    TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT chk_employes_statut
         CHECK (statut IN ('ACTIF', 'INACTIF'))
 );
@@ -372,112 +372,112 @@ CREATE INDEX idx_affectation_poste ON affectation (posteId);
 -- Onboarding et documents (Bloc 4)
 CREATE TABLE onboarding (
     id          BIGSERIAL PRIMARY KEY,
-    employe_id  BIGINT      NOT NULL REFERENCES employes(id),
-    date_debut  DATE        NOT NULL,
+    employeId   BIGINT      NOT NULL REFERENCES employes(id),
+    dateDebut   DATE        NOT NULL,
     statut      VARCHAR(20) NOT NULL DEFAULT 'EN_COURS'
         CHECK (statut IN ('EN_COURS', 'TERMINE', 'ANNULE')),
-    created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    createdAt   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updatedAt   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE onboarding_tache (
     id              BIGSERIAL PRIMARY KEY,
-    onboarding_id   BIGINT      NOT NULL REFERENCES onboarding(id) ON DELETE CASCADE,
+    onboardingId    BIGINT      NOT NULL REFERENCES onboarding(id) ON DELETE CASCADE,
     libelle         VARCHAR(150) NOT NULL,
-    responsable_id  BIGINT REFERENCES employes(id),
+    responsableId   BIGINT REFERENCES employes(id),
     echeance        DATE,
     statut          VARCHAR(20) NOT NULL DEFAULT 'A_FAIRE'
         CHECK (statut IN ('A_FAIRE', 'EN_COURS', 'FAIT')),
     obligatoire     BOOLEAN     NOT NULL DEFAULT TRUE,
-    created_at      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    createdAt       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE document (
     id              BIGSERIAL PRIMARY KEY,
-    type_document   VARCHAR(30) NOT NULL
-        CHECK (type_document IN ('CONTRAT_SIGNE','PIECE_IDENTITE','DIPLOME','JUSTIFICATIF','AUTRE')),
-    fichier_url     VARCHAR(255) NOT NULL,
-    employe_id      BIGINT      NOT NULL REFERENCES employes(id),
-    contrat_id      INTEGER REFERENCES contrat(id),
-    date_depot      DATE        NOT NULL DEFAULT CURRENT_DATE,
-    date_validite   DATE,
-    created_at      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    typeDocument    VARCHAR(30) NOT NULL
+        CHECK (typeDocument IN ('CONTRAT_SIGNE','PIECE_IDENTITE','DIPLOME','JUSTIFICATIF','AUTRE')),
+    fichierUrl      VARCHAR(255) NOT NULL,
+    employeId       BIGINT      NOT NULL REFERENCES employes(id),
+    contratId       INTEGER REFERENCES contrat(id),
+    dateDepot       DATE        NOT NULL DEFAULT CURRENT_DATE,
+    dateValidite    DATE,
+    createdAt       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_onboarding_employe    ON onboarding(employe_id);
-CREATE INDEX idx_onboarding_tache_ob   ON onboarding_tache(onboarding_id);
-CREATE INDEX idx_document_employe      ON document(employe_id);
-CREATE INDEX idx_document_contrat      ON document(contrat_id);
+CREATE INDEX idx_onboarding_employe    ON onboarding(employeId);
+CREATE INDEX idx_onboarding_tache_ob   ON onboarding_tache(onboardingId);
+CREATE INDEX idx_document_employe      ON document(employeId);
+CREATE INDEX idx_document_contrat      ON document(contratId);
 
 -- Journal d'audit (Bloc 5)
 CREATE TABLE journal_audit (
     id                BIGSERIAL PRIMARY KEY,
-    acteur_id         BIGINT      NOT NULL REFERENCES employes(id),
-    type_action       VARCHAR(20) NOT NULL
-        CHECK (type_action IN ('CONSULTATION','MODIFICATION','CREATION','SUPPRESSION','CONNEXION')),
-    table_cible       VARCHAR(100) NOT NULL,
-    enregistrement_id BIGINT,
+    acteurId          BIGINT      NOT NULL REFERENCES employes(id),
+    typeAction        VARCHAR(20) NOT NULL
+        CHECK (typeAction IN ('CONSULTATION','MODIFICATION','CREATION','SUPPRESSION','CONNEXION')),
+    tableCible        VARCHAR(100) NOT NULL,
+    enregistrementId  BIGINT,
     detail            TEXT,
-    date_action       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    dateAction        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_audit_acteur  ON journal_audit(acteur_id);
-CREATE INDEX idx_audit_table   ON journal_audit(table_cible);
-CREATE INDEX idx_audit_date    ON journal_audit(date_action);
+CREATE INDEX idx_audit_acteur  ON journal_audit(acteurId);
+CREATE INDEX idx_audit_table   ON journal_audit(tableCible);
+CREATE INDEX idx_audit_date    ON journal_audit(dateAction);
 
 -- Temps de travail et pointage (Bloc 6)
 CREATE TABLE regime_travail (
     id                 BIGSERIAL PRIMARY KEY,
     libelle            VARCHAR(80) NOT NULL UNIQUE,
-    nb_heures_semaine  INTEGER     NOT NULL CHECK (nb_heures_semaine > 0)
+    nbHeuresSemaine    INTEGER     NOT NULL CHECK (nbHeuresSemaine > 0)
 );
 
 CREATE TABLE horaire (
     id              BIGSERIAL PRIMARY KEY,
     libelle         VARCHAR(80) NOT NULL UNIQUE,
-    heure_debut     TIME        NOT NULL,
-    heure_fin       TIME        NOT NULL,
-    pause_minutes   INTEGER     DEFAULT 0 CHECK (pause_minutes >= 0),
-    CONSTRAINT chk_horaire_ordre CHECK (heure_fin > heure_debut)
+    heureDebut      TIME        NOT NULL,
+    heureFin        TIME        NOT NULL,
+    pauseMinutes    INTEGER     DEFAULT 0 CHECK (pauseMinutes >= 0),
+    CONSTRAINT chk_horaire_ordre CHECK (heureFin > heureDebut)
 );
 
 CREATE TABLE planning (
     id                BIGSERIAL PRIMARY KEY,
-    employe_id        BIGINT  NOT NULL REFERENCES employes(id),
-    horaire_id        BIGINT  NOT NULL REFERENCES horaire(id),
-    semaine_debut     DATE    NOT NULL,
-    regime_travail_id BIGINT REFERENCES regime_travail(id),
-    CONSTRAINT uq_planning_employe_semaine UNIQUE (employe_id, semaine_debut)
+    employeId         BIGINT  NOT NULL REFERENCES employes(id),
+    horaireId         BIGINT  NOT NULL REFERENCES horaire(id),
+    semaineDebut      DATE    NOT NULL,
+    regimeTravailId   BIGINT REFERENCES regime_travail(id),
+    CONSTRAINT uq_planning_employe_semaine UNIQUE (employeId, semaineDebut)
 );
 
 CREATE TABLE pointage (
     id          BIGSERIAL PRIMARY KEY,
-    employe_id  BIGINT      NOT NULL REFERENCES employes(id),
+    employeId   BIGINT      NOT NULL REFERENCES employes(id),
     direction   VARCHAR(10) NOT NULL CHECK (direction IN ('ENTREE', 'SORTIE')),
     horodatage  TIMESTAMP   NOT NULL,
     origine     VARCHAR(10) NOT NULL CHECK (origine IN ('BADGE', 'APPLI', 'MANUEL')),
-    planning_id BIGINT REFERENCES planning(id),
-    created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    planningId  BIGINT REFERENCES planning(id),
+    createdAt   TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE anomalie_pointage (
     id                       BIGSERIAL PRIMARY KEY,
-    employe_id               BIGINT      NOT NULL REFERENCES employes(id),
-    pointage_id              BIGINT REFERENCES pointage(id),
-    type_anomalie            VARCHAR(40) NOT NULL
-        CHECK (type_anomalie IN (
+    employeId                BIGINT      NOT NULL REFERENCES employes(id),
+    pointageId               BIGINT REFERENCES pointage(id),
+    typeAnomalie             VARCHAR(40) NOT NULL
+        CHECK (typeAnomalie IN (
             'ENTREE_SANS_SORTIE','HORS_PLANNING','RETARD','HEURE_SUP_NON_JUSTIFIEE')),
     description              TEXT,
     statut                   VARCHAR(20) NOT NULL DEFAULT 'DETECTEE'
         CHECK (statut IN ('DETECTEE','JUSTIFIEE','IGNOREE')),
-    commentaire_justification TEXT,
-    detected_at              TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+    commentaireJustification TEXT,
+    detectedAt               TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE INDEX idx_planning_employe   ON planning(employe_id);
-CREATE INDEX idx_pointage_employe   ON pointage(employe_id);
+CREATE INDEX idx_planning_employe   ON planning(employeId);
+CREATE INDEX idx_pointage_employe   ON pointage(employeId);
 CREATE INDEX idx_pointage_date      ON pointage(horodatage);
-CREATE INDEX idx_anomalie_employe   ON anomalie_pointage(employe_id);
+CREATE INDEX idx_anomalie_employe   ON anomalie_pointage(employeId);
 
 -- Congés et absences (Bloc 7)
 CREATE TABLE type_conge (
@@ -485,63 +485,63 @@ CREATE TABLE type_conge (
     code            VARCHAR(20)  NOT NULL UNIQUE,
     libelle         VARCHAR(100) NOT NULL,
     plafonne        BOOLEAN      NOT NULL DEFAULT FALSE,
-    duree_max_jours INTEGER CHECK (duree_max_jours IS NULL OR duree_max_jours > 0)
+    dureeMaxJours   INTEGER CHECK (dureeMaxJours IS NULL OR dureeMaxJours > 0)
 );
 
 CREATE TABLE droit_conge (
     id              BIGSERIAL PRIMARY KEY,
-    employe_id      BIGINT  NOT NULL REFERENCES employes(id),
-    type_conge_id   BIGINT  NOT NULL REFERENCES type_conge(id),
+    employeId       BIGINT  NOT NULL REFERENCES employes(id),
+    typeCongeId     BIGINT  NOT NULL REFERENCES type_conge(id),
     annee           INTEGER NOT NULL CHECK (annee >= 2000),
-    jours_acquis    NUMERIC(5,1) NOT NULL CHECK (jours_acquis >= 0),
-    CONSTRAINT uq_droit_conge UNIQUE (employe_id, type_conge_id, annee)
+    joursAcquis     NUMERIC(5,1) NOT NULL CHECK (joursAcquis >= 0),
+    CONSTRAINT uq_droit_conge UNIQUE (employeId, typeCongeId, annee)
 );
 
 CREATE TABLE solde_conge (
     id              BIGSERIAL PRIMARY KEY,
-    employe_id      BIGINT         NOT NULL REFERENCES employes(id),
-    type_conge_id   BIGINT         NOT NULL REFERENCES type_conge(id),
-    solde_courant   NUMERIC(5,1)   NOT NULL DEFAULT 0 CHECK (solde_courant >= 0),
-    updated_at      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uq_solde_conge UNIQUE (employe_id, type_conge_id)
+    employeId       BIGINT         NOT NULL REFERENCES employes(id),
+    typeCongeId     BIGINT         NOT NULL REFERENCES type_conge(id),
+    soldeCourant    NUMERIC(5,1)   NOT NULL DEFAULT 0 CHECK (soldeCourant >= 0),
+    updatedAt       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_solde_conge UNIQUE (employeId, typeCongeId)
 );
 
 CREATE TABLE demande_conge (
     id                      BIGSERIAL PRIMARY KEY,
-    employe_id              BIGINT      NOT NULL REFERENCES employes(id),
-    type_conge_id           BIGINT      NOT NULL REFERENCES type_conge(id),
-    date_debut              DATE        NOT NULL,
-    date_fin                DATE        NOT NULL,
+    employeId               BIGINT      NOT NULL REFERENCES employes(id),
+    typeCongeId             BIGINT      NOT NULL REFERENCES type_conge(id),
+    dateDebut               DATE        NOT NULL,
+    dateFin                 DATE        NOT NULL,
     statut                  VARCHAR(25) NOT NULL DEFAULT 'BROUILLON'
         CHECK (statut IN (
             'BROUILLON','SOUMISE','VALIDEE_MANAGER','VALIDEE_RH','REFUSEE','ANNULEE')),
     commentaire             TEXT,
-    validateur_manager_id   BIGINT REFERENCES employes(id),
-    date_validation_manager TIMESTAMP,
-    validateur_rh_id        BIGINT REFERENCES employes(id),
-    date_validation_rh      TIMESTAMP,
-    created_at              TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_demande_conge_dates CHECK (date_fin >= date_debut)
+    validateurManagerId     BIGINT REFERENCES employes(id),
+    dateValidationManager   TIMESTAMP,
+    validateurRhId          BIGINT REFERENCES employes(id),
+    dateValidationRh        TIMESTAMP,
+    createdAt               TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_demande_conge_dates CHECK (dateFin >= dateDebut)
 );
 
 CREATE TABLE absence (
     id               BIGSERIAL PRIMARY KEY,
-    employe_id       BIGINT      NOT NULL REFERENCES employes(id),
-    type_absence     VARCHAR(20) NOT NULL
-        CHECK (type_absence IN ('CONGE_ANNUEL','RTT','MALADIE','SANS_SOLDE','AUTRE')),
-    date_debut       DATE        NOT NULL,
-    date_fin         DATE        NOT NULL,
-    demande_conge_id BIGINT REFERENCES demande_conge(id),
-    justificatif_url VARCHAR(255),
+    employeId        BIGINT      NOT NULL REFERENCES employes(id),
+    typeAbsence      VARCHAR(20) NOT NULL
+        CHECK (typeAbsence IN ('CONGE_ANNUEL','RTT','MALADIE','SANS_SOLDE','AUTRE')),
+    dateDebut        DATE        NOT NULL,
+    dateFin          DATE        NOT NULL,
+    demandeCongeId   BIGINT REFERENCES demande_conge(id),
+    justificatifUrl  VARCHAR(255),
     justifiee        BOOLEAN     NOT NULL DEFAULT FALSE,
-    created_at       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_absence_dates CHECK (date_fin >= date_debut)
+    createdAt        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_absence_dates CHECK (dateFin >= dateDebut)
 );
 
-CREATE INDEX idx_demande_conge_employe ON demande_conge(employe_id);
+CREATE INDEX idx_demande_conge_employe ON demande_conge(employeId);
 CREATE INDEX idx_demande_conge_statut  ON demande_conge(statut);
-CREATE INDEX idx_absence_employe       ON absence(employe_id);
-CREATE INDEX idx_absence_dates         ON absence(date_debut, date_fin);
+CREATE INDEX idx_absence_employe       ON absence(employeId);
+CREATE INDEX idx_absence_dates         ON absence(dateDebut, dateFin);
 
 COMMIT;
 

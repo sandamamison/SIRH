@@ -9,60 +9,60 @@ CREATE TABLE IF NOT EXISTS type_conge (
     code            VARCHAR(20)  NOT NULL UNIQUE,
     libelle         VARCHAR(100) NOT NULL,
     plafonne        BOOLEAN      NOT NULL DEFAULT FALSE,
-    duree_max_jours INTEGER CHECK (duree_max_jours IS NULL OR duree_max_jours > 0)
+    dureeMaxJours   INTEGER CHECK (dureeMaxJours IS NULL OR dureeMaxJours > 0)
 );
 
 CREATE TABLE IF NOT EXISTS droit_conge (
     id              BIGSERIAL PRIMARY KEY,
-    employe_id      BIGINT  NOT NULL REFERENCES employes(id),
-    type_conge_id   BIGINT  NOT NULL REFERENCES type_conge(id),
+    employeId       BIGINT  NOT NULL REFERENCES employes(id),
+    typeCongeId     BIGINT  NOT NULL REFERENCES type_conge(id),
     annee           INTEGER NOT NULL CHECK (annee >= 2000),
-    jours_acquis    NUMERIC(5,1) NOT NULL CHECK (jours_acquis >= 0),
-    CONSTRAINT uq_droit_conge UNIQUE (employe_id, type_conge_id, annee)
+    joursAcquis     NUMERIC(5,1) NOT NULL CHECK (joursAcquis >= 0),
+    CONSTRAINT uq_droit_conge UNIQUE (employeId, typeCongeId, annee)
 );
 
 CREATE TABLE IF NOT EXISTS solde_conge (
     id              BIGSERIAL PRIMARY KEY,
-    employe_id      BIGINT         NOT NULL REFERENCES employes(id),
-    type_conge_id   BIGINT         NOT NULL REFERENCES type_conge(id),
-    solde_courant   NUMERIC(5,1)   NOT NULL DEFAULT 0 CHECK (solde_courant >= 0),
-    updated_at      TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT uq_solde_conge UNIQUE (employe_id, type_conge_id)
+    employeId       BIGINT         NOT NULL REFERENCES employes(id),
+    typeCongeId     BIGINT         NOT NULL REFERENCES type_conge(id),
+    soldeCourant    NUMERIC(5,1)   NOT NULL DEFAULT 0 CHECK (soldeCourant >= 0),
+    updatedAt       TIMESTAMP      NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT uq_solde_conge UNIQUE (employeId, typeCongeId)
 );
 
 CREATE TABLE IF NOT EXISTS demande_conge (
     id                      BIGSERIAL PRIMARY KEY,
-    employe_id              BIGINT      NOT NULL REFERENCES employes(id),
-    type_conge_id           BIGINT      NOT NULL REFERENCES type_conge(id),
-    date_debut              DATE        NOT NULL,
-    date_fin                DATE        NOT NULL,
+    employeId               BIGINT      NOT NULL REFERENCES employes(id),
+    typeCongeId             BIGINT      NOT NULL REFERENCES type_conge(id),
+    dateDebut               DATE        NOT NULL,
+    dateFin                 DATE        NOT NULL,
     statut                  VARCHAR(25) NOT NULL DEFAULT 'BROUILLON'
         CHECK (statut IN (
             'BROUILLON','SOUMISE','VALIDEE_MANAGER','VALIDEE_RH','REFUSEE','ANNULEE')),
     commentaire             TEXT,
-    validateur_manager_id   BIGINT REFERENCES employes(id),
-    date_validation_manager TIMESTAMP,
-    validateur_rh_id        BIGINT REFERENCES employes(id),
-    date_validation_rh      TIMESTAMP,
-    created_at              TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_demande_conge_dates CHECK (date_fin >= date_debut)
+    validateurManagerId     BIGINT REFERENCES employes(id),
+    dateValidationManager   TIMESTAMP,
+    validateurRhId          BIGINT REFERENCES employes(id),
+    dateValidationRh        TIMESTAMP,
+    createdAt               TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_demande_conge_dates CHECK (dateFin >= dateDebut)
 );
 
 CREATE TABLE IF NOT EXISTS absence (
     id               BIGSERIAL PRIMARY KEY,
-    employe_id       BIGINT      NOT NULL REFERENCES employes(id),
-    type_absence     VARCHAR(20) NOT NULL
-        CHECK (type_absence IN ('CONGE_ANNUEL','RTT','MALADIE','SANS_SOLDE','AUTRE')),
-    date_debut       DATE        NOT NULL,
-    date_fin         DATE        NOT NULL,
-    demande_conge_id BIGINT REFERENCES demande_conge(id),
-    justificatif_url VARCHAR(255),
+    employeId        BIGINT      NOT NULL REFERENCES employes(id),
+    typeAbsence      VARCHAR(20) NOT NULL
+        CHECK (typeAbsence IN ('CONGE_ANNUEL','RTT','MALADIE','SANS_SOLDE','AUTRE')),
+    dateDebut        DATE        NOT NULL,
+    dateFin          DATE        NOT NULL,
+    demandeCongeId   BIGINT REFERENCES demande_conge(id),
+    justificatifUrl  VARCHAR(255),
     justifiee        BOOLEAN     NOT NULL DEFAULT FALSE,
-    created_at       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT chk_absence_dates CHECK (date_fin >= date_debut)
+    createdAt        TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT chk_absence_dates CHECK (dateFin >= dateDebut)
 );
 
-CREATE INDEX IF NOT EXISTS idx_demande_conge_employe ON demande_conge(employe_id);
+CREATE INDEX IF NOT EXISTS idx_demande_conge_employe ON demande_conge(employeId);
 CREATE INDEX IF NOT EXISTS idx_demande_conge_statut  ON demande_conge(statut);
-CREATE INDEX IF NOT EXISTS idx_absence_employe       ON absence(employe_id);
-CREATE INDEX IF NOT EXISTS idx_absence_dates         ON absence(date_debut, date_fin);
+CREATE INDEX IF NOT EXISTS idx_absence_employe       ON absence(employeId);
+CREATE INDEX IF NOT EXISTS idx_absence_dates         ON absence(dateDebut, dateFin);

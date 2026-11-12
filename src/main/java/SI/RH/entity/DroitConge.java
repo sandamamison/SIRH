@@ -4,17 +4,17 @@ import jakarta.persistence.*;
 
 @Entity
 @Table(name = "droit_conge",
-       uniqueConstraints = @UniqueConstraint(columnNames = {"employe_id", "type_conge_id", "annee"}))
+       uniqueConstraints = @UniqueConstraint(columnNames = {"employeId", "typeCongeId", "annee"}))
 public class DroitConge {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "employe_id", nullable = false)
+    @Column(nullable = false)
     private Long employeId;
 
-    @Column(name = "type_conge_id", nullable = false)
+    @Column(nullable = false)
     private Long typeCongeId;
 
     @Column(nullable = false)
