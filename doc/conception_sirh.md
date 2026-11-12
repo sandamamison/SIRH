@@ -31,7 +31,10 @@ flowchart LR
     A[Bloc 1<br/>Besoin en personnel] --> B[Bloc 2<br/>Recrutement]
     B --> C[Bloc 3<br/>Sélection et embauche]
     C --> D[Bloc 4<br/>Contrat et onboarding]
-    D --> E[Extensions<br/>Vie du salarié, sortie]
+    D --> E[Bloc 5<br/>Dossier salarié]
+    E --> F[Bloc 6<br/>Temps et pointage]
+    F --> G[Bloc 7<br/>Congés et absences]
+    G --> H[Extensions<br/>Évolution, sortie]
 ```
 
 ---
@@ -185,6 +188,103 @@ flowchart LR
 
 ---
 
+## 8. Bloc 5 — Dossier administratif du salarié
+
+### Description
+Le dossier salarié devient le **référentiel central du SIRH** : tous les autres blocs (Temps, Congés, Paie) s'y rattachent sans dupliquer ses données.
+
+### Objectifs
+- Centraliser **identité, coordonnées, documents et situation professionnelle**.
+- Conserver **contrats, affectations, salaire et historique de carrière**.
+- Gérer les **documents administratifs et leur validité**.
+- Prévoir **confidentialité, habilitations et journal d'audit**.
+
+### Objets métier
+`Employe`, `Document`, `Contrat`, `Affectation`, `JournalAudit`.
+
+### Contenu du dossier
+
+| Rubrique | Contenu |
+|---|---|
+| **Identité & coordonnées** | État civil, adresse, téléphone, e-mail, matricule |
+| **Situation professionnelle** | Poste, rattachement, statut, manager |
+| **Contrats & affectations** | Historique complet (repris du Bloc 4) |
+| **Salaire** | Salaire actuel et historique des évolutions |
+| **Historique de carrière** | Changements de poste, d'affectation, de salaire |
+| **Documents** | Pièces administratives, avec date de validité |
+
+### Règles de gestion
+- **RG5-01** : chaque document a un type, une date de dépôt et une date de validité.
+- **RG5-02** : les documents expirés ou proches de l'expiration déclenchent une alerte.
+- **RG5-03** : les habilitations définissent qui peut consulter ou modifier quelle rubrique.
+- **RG5-04** : toute consultation ou modification sensible est enregistrée dans le journal d'audit (qui, quand, quoi).
+
+### Point de conception
+> Le dossier salarié est le **référentiel central** : les blocs Temps de travail, Congés et Paie s'y rattachent, ils ne dupliquent pas ses données.
+
+---
+
+## 9. Bloc 6 — Temps de travail et pointage
+
+### Description
+- Définir **horaires, planning et régime de travail**.
+- Enregistrer **entrées, sorties, retards et heures supplémentaires**.
+- Calculer le **temps réellement travaillé**.
+- Détecter les **anomalies de pointage**.
+- Les données de temps **alimentent les absences et les variables de paie**.
+
+### Objets métier
+`Horaire`, `Planning`, `RegimeTravail`, `Pointage`, `AnomaliePointage`.
+
+### Flux
+```
+Horaires / planning → Pointage (entrées, sorties) → Calcul du temps réel → Détection d'anomalies
+                                                                         → Absences + Variables de paie
+```
+
+### Règles de gestion
+- **RG6-01** : chaque employé a un régime de travail et un planning associé.
+- **RG6-02** : chaque pointage enregistre l'employé, la direction (entrée/sortie), l'horodatage et l'origine (badge, appli…).
+- **RG6-03** : le temps réel est calculé par différence entrée/sortie, comparé au planning.
+- **RG6-04** : une anomalie est générée en cas d'entrée sans sortie, de pointage hors planning, ou de retard/HS non justifié.
+- **RG6-05** : les données de temps sont transmises au Bloc 7 (absences) et aux variables de paie.
+
+---
+
+## 10. Bloc 7 — Congés et absences
+
+### Description
+- Workflow : **Demande de congé → Contrôle du solde → Validation manager/RH**.
+- Gérer droits, soldes, types de congés, absences et justificatifs.
+- Contrôler les **chevauchements** et la **disponibilité du solde**.
+- Mettre à jour **planning et variables de paie** après validation.
+
+### Objets métier
+`TypeConge`, `DroitConge`, `SoldeConge`, `DemandeConge`, `Absence`.
+
+### Workflow
+```mermaid
+stateDiagram-v2
+    [*] --> Brouillon
+    Brouillon --> Soumise: Salarié soumet
+    Soumise --> SoldeControle: Vérification automatique du solde
+    SoldeControle --> ValideeManager: Manager valide
+    SoldeControle --> Refusee: Solde insuffisant
+    ValideeManager --> ValideeRH: RH valide
+    ValideeManager --> Refusee: Manager refuse
+    ValideeRH --> [*]: Planning et paie mis à jour
+    Refusee --> [*]
+```
+
+### Règles de gestion
+- **RG7-01** : chaque salarié a un solde par type de congé (congé annuel, RTT, maladie…).
+- **RG7-02** : une demande est refusée automatiquement si le solde est insuffisant.
+- **RG7-03** : deux congés ne peuvent pas se chevaucher pour le même salarié.
+- **RG7-04** : toute absence non planifiée doit être justifiée (arrêt maladie, justificatif…).
+- **RG7-05** : après validation, le planning est mis à jour et les variables de paie sont alimentées.
+
+---
+
 ## 8. Modèle de données
 
 ```mermaid
@@ -207,6 +307,17 @@ erDiagram
     ONBOARDING ||--o{ ONBOARDING_TACHE : contient
     EMPLOYE ||--o{ DOCUMENT : possede
     CONTRAT ||--o{ DOCUMENT : justifie
+    EMPLOYE ||--o{ JOURNAL_AUDIT : genere
+    EMPLOYE ||--o{ POINTAGE : effectue
+    EMPLOYE ||--o{ DROIT_CONGE : detient
+    EMPLOYE ||--o{ SOLDE_CONGE : a
+    EMPLOYE ||--o{ DEMANDE_CONGE : soumet
+    EMPLOYE ||--o{ ABSENCE : a
+    TYPE_CONGE ||--o{ DROIT_CONGE : definit
+    TYPE_CONGE ||--o{ DEMANDE_CONGE : categorise
+    DEMANDE_CONGE ||--o| ABSENCE : genere
+    PLANNING ||--o{ POINTAGE : reference
+    EMPLOYE ||--o{ PLANNING : suit
 ```
 
 ### Entités principales
@@ -228,7 +339,18 @@ erDiagram
 | `Affectation` | id, employé_id, poste_id, date_début, date_fin |
 | `Onboarding` | id, employé_id, date_début, statut |
 | `OnboardingTâche` | id, onboarding_id, libellé, responsable_id, échéance, statut, obligatoire |
-| `Document` | id, type, fichier, employé_id, contrat_id, date |
+| `Document` | id, type, fichier, employé_id, contrat_id, date_dépôt, date_validité |
+| `JournalAudit` | id, employé_id, acteur_id, action, table_cible, date, détail |
+| `Horaire` | id, libellé, heure_début, heure_fin, pause |
+| `RegimeTravail` | id, libellé, nb_heures_semaine |
+| `Planning` | id, employé_id, semaine, horaire_id |
+| `Pointage` | id, employé_id, direction (ENTREE/SORTIE), horodatage, origine, planning_id |
+| `AnomaliePointage` | id, pointage_id, type, description, statut |
+| `TypeConge` | id, code, libellé, plafonné, duree_max |
+| `DroitConge` | id, employé_id, type_conge_id, année, jours_acquis |
+| `SoldeConge` | id, employé_id, type_conge_id, solde_actuel |
+| `DemandeConge` | id, employé_id, type_conge_id, date_début, date_fin, statut, commentaire |
+| `Absence` | id, employé_id, date_début, date_fin, type, justificatif |
 
 ---
 
@@ -238,6 +360,9 @@ erDiagram
 2. **Recrutement** : Offre publiée → Candidatures → Présélection → Entretiens/tests → Décision.
 3. **Embauche** : Proposition → Acceptation → Création employé + matricule + contrat + affectation.
 4. **Intégration** : Création de l'onboarding → Tâches par service → Clôture.
+5. **Dossier** : Référentiel central alimenté par tous les blocs ; accès soumis à habilitations ; journal d'audit.
+6. **Temps** : Planning → Pointage → Calcul temps réel → Anomalies → Variables de paie.
+7. **Congés** : Demande → Contrôle solde → Validation manager/RH → Mise à jour planning + paie.
 
 Chaque transition doit enregistrer : **acteur, date, commentaire** (traçabilité).
 
@@ -250,9 +375,14 @@ Chaque transition doit enregistrer : **acteur, date, commentaire** (traçabilit�
 | Gérer offres et candidatures | | ✅ | | |
 | Participer aux entretiens / évaluer | ✅ | ✅ | | |
 | Créer contrat et dossier salarié | | ✅ | | |
+| Gérer l'onboarding | | ✅ | | |
+| Consulter le dossier salarié complet | | ✅ | | |
 | Voir son propre dossier | | | | ✅ |
+| Valider les congés | ✅ | ✅ | | |
+| Consulter le journal d'audit | | ✅ | ✅ | |
+| Gérer le pointage | | ✅ | | |
 
-> Les données RH (salaire, évaluations) sont sensibles : accès limité par rôle, journalisation des consultations, respect de la protection des données personnelles.
+> Les données RH (salaire, évaluations, documents sensibles) sont soumises à habilitations ; toute consultation ou modification est journalisée (journal d'audit).
 
 ## 11. Architecture proposée
 
@@ -263,16 +393,21 @@ flowchart TB
     API --> S2[Service Recrutement]
     API --> S3[Service Embauche]
     API --> S4[Service Contrat et Onboarding]
-    S1 & S2 & S3 & S4 --> WF[Moteur de workflow<br/>statuts et transitions]
-    S1 & S2 & S3 & S4 --> DB[(Base de données)]
-    S4 --> DOC[(Stockage documents)]
+    API --> S5[Service Dossier salarié]
+    API --> S6[Service Temps et Pointage]
+    API --> S7[Service Congés et Absences]
+    S1 & S2 & S3 & S4 & S5 & S6 & S7 --> WF[Moteur de workflow<br/>statuts et transitions]
+    S1 & S2 & S3 & S4 & S5 & S6 & S7 --> DB[(Base de données)]
+    S4 & S5 --> DOC[(Stockage documents)]
+    S5 --> AUDIT[(Journal d'audit)]
     WF --> NOTIF[Notifications email]
 ```
 
 Principes :
 - Une couche **domaine** portant les règles de gestion (pas de logique dans les écrans).
 - Les statuts et transitions sont explicites (machine à états).
-- Historisation plutôt qu'écrasement (contrats, affectations, validations).
+- Historisation plutôt qu'écrasement (contrats, affectations, validations, soldes congés).
+- Le dossier salarié est le **référentiel central** : les autres services le consultent, ne le dupliquent pas.
 
 ## 12. Périmètre du MVP
 
@@ -282,15 +417,18 @@ Principes :
 | Must | Offre d'emploi, candidatures, statuts de candidature |
 | Must | Proposition d'embauche et création du dossier salarié + matricule |
 | Must | Contrats successifs avec historique |
+| Must | Dossier administratif du salarié (Bloc 5) — référentiel central |
 | Should | Entretiens et évaluations |
 | Should | Checklist d'onboarding |
+| Should | Temps de travail et pointage (Bloc 6) |
+| Should | Congés et absences (Bloc 7) |
 | Could | Documents, notifications email, tableaux de bord |
+| Could | Journal d'audit complet |
 
 ## 13. Extensions possibles (à confirmer avec la suite du cours)
 
 Pour couvrir « tout le cycle de vie du salarié » :
-- **Temps et absences** : congés, absences, pointage.
-- **Paie** : éléments variables, export vers la paie.
+- **Paie** : éléments variables, export vers la paie (alimentée par Blocs 6 et 7).
 - **Formation et compétences** : plan de formation, habilitations.
 - **Évaluation de performance** : entretiens annuels, objectifs.
 - **Mobilité et carrière** : changement de poste, promotion.
@@ -305,3 +443,6 @@ Pour couvrir « tout le cycle de vie du salarié » :
 | `employe.type_contrat` unique | Table `Contrat` avec historique |
 | Écrans CRUD sans logique | Workflows, statuts, règles de gestion |
 | Onboarding informel | `Onboarding` + `OnboardingTâche` avec checklist |
+| Dossier salarié fragmenté | Référentiel central unique, accès par habilitations |
+| Pointage sans contrôle | Comparaison planning/pointage, détection d'anomalies |
+| Congé sans solde ni validation | Workflow complet : contrôle solde → manager → RH |
