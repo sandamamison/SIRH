@@ -16,6 +16,9 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 DROP FUNCTION IF EXISTS mettre_a_jour_updated_at() CASCADE;
 
 DROP TABLE IF EXISTS
+    document,
+    onboarding_tache,
+    onboarding,
     evaluationcandidat,
     intervenantentretien,
     historiquestatutcandidature,
@@ -352,28 +355,45 @@ CREATE INDEX idx_contrat_precedent ON contrat (contratPrecedentId);
 CREATE INDEX idx_affectation_employe ON affectation (employeId);
 CREATE INDEX idx_affectation_poste ON affectation (posteId);
 
--- -- Mise à jour automatique des colonnes techniques.
--- CREATE OR REPLACE FUNCTION mettre_a_jour_updated_at()
--- RETURNS TRIGGER
--- LANGUAGE plpgsql
--- AS $$
--- BEGIN
---     NEW.updated_at = CURRENT_TIMESTAMP;
---     RETURN NEW;
--- END;
--- $$;
---
--- CREATE TRIGGER trg_personnes_updated_at
---     BEFORE UPDATE ON personnes
---     FOR EACH ROW EXECUTE FUNCTION mettre_a_jour_updated_at();
---
--- CREATE TRIGGER trg_employes_updated_at
---     BEFORE UPDATE ON employes
---     FOR EACH ROW EXECUTE FUNCTION mettre_a_jour_updated_at();
---
--- CREATE TRIGGER trg_propositions_embauche_updated_at
---     BEFORE UPDATE ON propositions_embauche
---     FOR EACH ROW EXECUTE FUNCTION mettre_a_jour_updated_at();
+-- Onboarding et documents (Bloc 4)
+CREATE TABLE onboarding (
+    id          BIGSERIAL PRIMARY KEY,
+    employe_id  BIGINT      NOT NULL REFERENCES employes(id),
+    date_debut  DATE        NOT NULL,
+    statut      VARCHAR(20) NOT NULL DEFAULT 'EN_COURS'
+        CHECK (statut IN ('EN_COURS', 'TERMINE', 'ANNULE')),
+    created_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE onboarding_tache (
+    id              BIGSERIAL PRIMARY KEY,
+    onboarding_id   BIGINT      NOT NULL REFERENCES onboarding(id) ON DELETE CASCADE,
+    libelle         VARCHAR(150) NOT NULL,
+    responsable_id  BIGINT REFERENCES employes(id),
+    echeance        DATE,
+    statut          VARCHAR(20) NOT NULL DEFAULT 'A_FAIRE'
+        CHECK (statut IN ('A_FAIRE', 'EN_COURS', 'FAIT')),
+    obligatoire     BOOLEAN     NOT NULL DEFAULT TRUE,
+    created_at      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE document (
+    id              BIGSERIAL PRIMARY KEY,
+    type_document   VARCHAR(30) NOT NULL
+        CHECK (type_document IN ('CONTRAT_SIGNE','PIECE_IDENTITE','DIPLOME','JUSTIFICATIF','AUTRE')),
+    fichier_url     VARCHAR(255) NOT NULL,
+    employe_id      BIGINT      NOT NULL REFERENCES employes(id),
+    contrat_id      INTEGER REFERENCES contrat(id),
+    date_depot      DATE        NOT NULL DEFAULT CURRENT_DATE,
+    date_validite   DATE,
+    created_at      TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_onboarding_employe    ON onboarding(employe_id);
+CREATE INDEX idx_onboarding_tache_ob   ON onboarding_tache(onboarding_id);
+CREATE INDEX idx_document_employe      ON document(employe_id);
+CREATE INDEX idx_document_contrat      ON document(contrat_id);
 
 COMMIT;
 
