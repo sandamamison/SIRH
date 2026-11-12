@@ -16,6 +16,7 @@ CREATE EXTENSION IF NOT EXISTS btree_gist;
 DROP FUNCTION IF EXISTS mettre_a_jour_updated_at() CASCADE;
 
 DROP TABLE IF EXISTS
+    journal_audit,
     document,
     onboarding_tache,
     onboarding,
@@ -394,6 +395,22 @@ CREATE INDEX idx_onboarding_employe    ON onboarding(employe_id);
 CREATE INDEX idx_onboarding_tache_ob   ON onboarding_tache(onboarding_id);
 CREATE INDEX idx_document_employe      ON document(employe_id);
 CREATE INDEX idx_document_contrat      ON document(contrat_id);
+
+-- Journal d'audit (Bloc 5)
+CREATE TABLE journal_audit (
+    id                BIGSERIAL PRIMARY KEY,
+    acteur_id         BIGINT      NOT NULL REFERENCES employes(id),
+    type_action       VARCHAR(20) NOT NULL
+        CHECK (type_action IN ('CONSULTATION','MODIFICATION','CREATION','SUPPRESSION','CONNEXION')),
+    table_cible       VARCHAR(100) NOT NULL,
+    enregistrement_id BIGINT,
+    detail            TEXT,
+    date_action       TIMESTAMP   NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE INDEX idx_audit_acteur  ON journal_audit(acteur_id);
+CREATE INDEX idx_audit_table   ON journal_audit(table_cible);
+CREATE INDEX idx_audit_date    ON journal_audit(date_action);
 
 COMMIT;
 
