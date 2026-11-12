@@ -10,7 +10,7 @@
 #   candidat:password  (Rôle CANDIDAT)
 # ==============================================================================
 
-BASE_URL="http://localhost:8080"
+BASE_URL="http://localhost:8081"
 
 echo "=========================================="
 echo " 1. TEST BLOC 1 : Besoin en personnel"
