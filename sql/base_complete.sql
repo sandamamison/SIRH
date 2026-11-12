@@ -107,6 +107,9 @@ CREATE TABLE departement
         CHECK (departementParentId IS NULL OR departementParentId <> id)
 );
 
+-- Rattachement organisationnel direct de l'employe (Bloc 5)
+ALTER TABLE employes ADD COLUMN IF NOT EXISTS departementid BIGINT REFERENCES departement(id);
+
 CREATE TABLE poste
 (
     id                 SERIAL PRIMARY KEY,

@@ -2,6 +2,7 @@ package SI.RH.security;
 
 import org.springframework.context.annotation.*;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -19,6 +20,7 @@ public class SecurityConfig {
         return http
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
+            .httpBasic(Customizer.withDefaults())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/login.html", "/login", "/styles.css").permitAll()
                 .requestMatchers("/", "/index.html", "/app.js").authenticated()
@@ -34,6 +36,11 @@ public class SecurityConfig {
                 .requestMatchers("/api/propositions-embauche/**", "/api/candidatures/**", "/api/offres/**").hasAnyRole("CANDIDAT", "RH", "DIRECTION", "ADMIN")
                 .requestMatchers("/api/contrats/**", "/api/affectations/**").hasAnyRole("RH", "DIRECTION", "ADMIN")
                 .requestMatchers("/api/entretiens/**", "/api/evaluations/**", "/api/intervenants-entretien/**").hasAnyRole("SALARIE", "RH", "DIRECTION", "ADMIN")
+                .requestMatchers("/api/onboardings/**", "/api/documents/**").hasAnyRole("SALARIE", "MANAGER", "RH", "DIRECTION", "ADMIN")
+                .requestMatchers("/api/audit/**").hasAnyRole("RH", "DIRECTION", "ADMIN")
+                .requestMatchers("/api/dossier-salarie/**").hasAnyRole("SALARIE", "MANAGER", "RH", "DIRECTION", "ADMIN")
+                .requestMatchers("/api/pointages/**", "/api/plannings/**").hasAnyRole("SALARIE", "MANAGER", "RH", "DIRECTION", "ADMIN")
+                .requestMatchers("/api/conges/**", "/api/absences/**").hasAnyRole("SALARIE", "MANAGER", "RH", "DIRECTION", "ADMIN")
                 .anyRequest().hasAnyRole("DIRECTION", "ADMIN")
             )
             .formLogin(form -> form
