@@ -25,65 +25,65 @@ Répartition par bloc du cours *Conception logiciel – Gestion RH*, avec une ph
 
 ## Personne 2 : Bloc 2, Recrutement
 
-- [ ] Entités `OffreEmploi`, `Candidature`, `Entretien`, `ÉvaluationCandidat`
-- [ ] Création d'une offre à partir d'une demande validée (lien avec la personne 1)
-- [ ] Règles RG2-01 à RG2-08 (une seule candidature par offre et par candidat, clôture de l'offre…)
-- [ ] Écrans : publication d'offre, liste des candidatures avec filtres, planning des entretiens, fiche d'évaluation
+- [x] Entités `OffreEmploi`, `Candidature`, `Entretien`, `ÉvaluationCandidat`
+- [x] Création d'une offre à partir d'une demande validée (lien avec la personne 1)
+- [x] Règles RG2-01 à RG2-08 (une seule candidature par offre et par candidat, clôture de l'offre…)
+- [ ] Reporté : écrans (publication d'offre, liste des candidatures avec filtres, planning des entretiens, fiche d'évaluation)
 
 ## Personne 3 : Bloc 3, Sélection et embauche
 
-- [ ] Lire le guide détaillé : [`bloc3_selection_embauche.md`](bloc3_selection_embauche.md)
-- [ ] Entités `Personne`, `PropositionEmbauche`, `Employé` (matricule unique)
-- [ ] Séparation `Personne` / `Candidature` / `Employé` (CANDIDAT ≠ EMPLOYÉ)
-- [ ] Traitement de l'acceptation : création du dossier salarié, du matricule, du contrat et de l'affectation
-- [ ] Écrans : envoi et suivi de la proposition, fiche salarié
+- [x] Lire le guide détaillé : [`bloc3_selection_embauche.md`](bloc3_selection_embauche.md)
+- [x] Entités `Personne`, `PropositionEmbauche`, `Employé` (matricule unique)
+- [x] Séparation `Personne` / `Candidature` / `Employé` (CANDIDAT ≠ EMPLOYÉ)
+- [x] Traitement de l'acceptation : création du dossier salarié, du matricule, du contrat et de l'affectation
+- [ ] Reporté : écrans (envoi et suivi de la proposition, fiche salarié)
 
 ## Personne 4 : Bloc 4, Contrats et onboarding
 
 > Un salarié peut avoir plusieurs contrats successifs (CDD, renouvellement, CDI…). Ne jamais écraser l'historique.
 
-- [ ] Entités `Contrat` et `Affectation` avec historique (pas de simple `type_contrat` sur l'employé)
-- [ ] Règles RG4-01 à RG4-04 (un seul contrat actif, renouvellement qui crée un nouveau contrat lié au précédent)
-- [ ] Gestion de la vacance d'un poste (`Poste` indépendant de l'employé)
-- [ ] Entités `Onboarding` et `OnboardingTache` — checklist automatique à l'embauche
-- [ ] Items checklist : contrat signé, badge, compte, matériel, formation, inscription paie
-- [ ] Workflow d'intégration : tâche assignée → en cours → faite → onboarding clôturé
-- [ ] Entité `Document` rattaché à l'employé et/ou au contrat
-- [ ] Écrans : historique des contrats, création et renouvellement, affectations, suivi onboarding
+- [x] Entités `Contrat` et `Affectation` avec historique (pas de simple `type_contrat` sur l'employé)
+- [x] Règles RG4-01 à RG4-04 (un seul contrat actif, renouvellement qui crée un nouveau contrat lié au précédent)
+- [x] Gestion de la vacance d'un poste (`Poste` indépendant de l'employé)
+- [x] Entités `Onboarding` et `OnboardingTache` — checklist automatique à l'embauche
+- [x] Items checklist : contrat signé, badge, compte, matériel, formation, inscription paie
+- [x] Workflow d'intégration : tâche assignée → en cours → faite → onboarding clôturé
+- [x] Entité `Document` rattaché à l'employé et/ou au contrat
+- [ ] Reporté : écrans (historique des contrats, création et renouvellement, affectations, suivi onboarding)
 
 ## Personne 5 : Bloc 5, Dossier administratif du salarié
 
 > Le dossier salarié est le référentiel central du SIRH. Les blocs Temps, Congés et Paie s'y rattachent.
 
-- [ ] Entités : `Employe`, `Document`, `JournalAudit`
-- [ ] Centraliser identité, coordonnées et situation professionnelle dans le dossier salarié
-- [ ] Conserver contrats, affectations, salaire et historique de carrière
-- [ ] Gestion des documents administratifs avec date de dépôt et date de validité
-- [ ] Alertes avant expiration de documents
+- [x] Entités : `Employe`, `Document`, `JournalAudit`
+- [x] Centraliser identité, coordonnées et situation professionnelle dans le dossier salarié
+- [x] Conserver contrats, affectations, salaire et historique de carrière
+- [x] Gestion des documents administratifs avec date de dépôt et date de validité
+- [x] Alertes avant expiration de documents
 - [ ] Habilitations : définir qui peut consulter/modifier quelle rubrique (salarié, manager, RH…)
-- [ ] Journal d'audit : enregistrer toute consultation ou modification sensible (qui, quand, quoi)
-- [ ] Gestion de la structure entreprise : Section, Service, Département…
-- [ ] Écrans : fiche salarié complète, liste des documents, journal d'audit
+- [x] Journal d'audit : enregistrer toute consultation ou modification sensible (qui, quand, quoi)
+- [x] Gestion de la structure entreprise : Section, Service, Département…
+- [ ] Reporté : écrans (fiche salarié complète, liste des documents, journal d'audit)
 
 ## Personne 6 : Bloc 6, Temps de travail et pointage
 
-- [ ] Entités : `Horaire`, `Planning`, `RegimeTravail`, `Pointage`, `AnomaliePointage`
-- [ ] Définir horaires, planning et régime de travail par employé
-- [ ] Enregistrer entrées, sorties, retards et heures supplémentaires
-- [ ] Calculer le temps réellement travaillé (différence entrée/sortie vs planning)
-- [ ] Détecter les anomalies de pointage (entrée sans sortie, hors planning, retard injustifié…)
-- [ ] Les données de temps alimentent les absences et les variables de paie (lien Bloc 7)
-- [ ] Écrans : saisie de pointage, planning hebdomadaire, rapport d'anomalies
+- [x] Entités : `Horaire`, `Planning`, `RegimeTravail`, `Pointage`, `AnomaliePointage`
+- [x] Définir horaires, planning et régime de travail par employé
+- [x] Enregistrer entrées, sorties, retards et heures supplémentaires
+- [x] Calculer le temps réellement travaillé (différence entrée/sortie vs planning)
+- [x] Détecter les anomalies de pointage (entrée sans sortie, hors planning, retard injustifié…)
+- [x] Les données de temps alimentent les absences et les variables de paie (lien Bloc 7)
+- [ ] Reporté : écrans (saisie de pointage, planning hebdomadaire, rapport d'anomalies)
 
 ## Personne 7 : Bloc 7, Congés et absences
 
-- [ ] Entités : `TypeConge`, `DroitConge`, `SoldeConge`, `DemandeConge`, `Absence`
-- [ ] Workflow : Demande de congé → Contrôle du solde → Validation manager/RH
-- [ ] Gérer droits, soldes, types de congés, absences et justificatifs
-- [ ] Contrôler les chevauchements et la disponibilité du solde
-- [ ] Mettre à jour le planning et les variables de paie après validation
-- [ ] Lien avec Bloc 6 (pointage) : absences détectées par le temps de travail
-- [ ] Écrans : formulaire de demande de congé, solde par salarié, planning des absences, validation RH
+- [x] Entités : `TypeConge`, `DroitConge`, `SoldeConge`, `DemandeConge`, `Absence`
+- [x] Workflow : Demande de congé → Contrôle du solde → Validation manager/RH
+- [x] Gérer droits, soldes, types de congés, absences et justificatifs
+- [x] Contrôler les chevauchements et la disponibilité du solde
+- [x] Mettre à jour le planning et les variables de paie après validation
+- [x] Lien avec Bloc 6 (pointage) : absences détectées par le temps de travail
+- [ ] Reporté : écrans (formulaire de demande de congé, solde par salarié, planning des absences, validation RH)
 
 ## Tous ensemble (fin)
 
