@@ -139,7 +139,7 @@ VALUES
 -- 7. Bloc 3 : Proposition d'embauche
 INSERT INTO propositions_embauche (id, candidature_id, statut, date_envoi, date_reponse, date_expiration, commentaire, created_by)
 VALUES
-    (1, 1, 'ACCEPTEE', TIMESTAMP '2026-10-25 09:00:00', TIMESTAMP '2026-10-26 14:00:00', DATE '2026-11-20', 'Proposition salariale retenue', 'rh');
+    (1, 1, 'ENVOYEE', TIMESTAMP '2026-10-25 09:00:00', NULL, DATE '2026-12-31', 'Proposition salariale retenue', 'rh');
 
 -- 8. Bloc 4 : Contrats, affectations, onboarding et documents
 INSERT INTO contrat
