@@ -30,6 +30,11 @@
       <button class="nav-item" data-page="embauche">Embauche</button>
       <button class="nav-item" data-page="carriere">Contrats & affectations</button>
       <button class="nav-item" data-page="acces">Utilisateurs & accès</button>
+      <button class="nav-item" data-page="paie">💰 Paie</button>
+      <button class="nav-item" data-page="bloc9">Évaluation & formation</button>
+      <button class="nav-item" data-page="bloc10">Carrière & mobilité</button>
+      <button class="nav-item" data-page="bloc11">Discipline</button>
+      <button class="nav-item" data-page="bloc12">Rupture & sortie</button>
     </nav>
 
     <main class="content">
@@ -53,6 +58,39 @@
             <li>Utilisez <code>candidat / password</code> pour accepter ou refuser sa proposition.</li>
             <li>Utilisez <code>direction / password</code> pour contrôler les validations et contrats.</li>
           </ol>
+        </div>
+      </section>
+      <section class="page" data-page-content="bloc9">
+        <div class="page-heading"><div><p class="eyebrow">Bloc 9</p><h2>Évaluation, compétences et formation</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Compétences</h3><div id="list-competences" class="data-list"></div><form data-block-action="/competences" class="business-form"><input name="code" placeholder="Code" required><input name="nom" placeholder="Nom" required><input name="categorie" placeholder="Catégorie" required><textarea name="description" placeholder="Description"></textarea><button class="button button-primary">Ajouter</button></form></div>
+          <div class="card"><h3>Objectifs</h3><div id="list-objectifs-evaluation" class="data-list"></div><form data-block-action="/objectifs-evaluation" class="business-form"><input name="employeId" type="number" placeholder="Employé" required><input name="titre" placeholder="Titre" required><input name="cible" placeholder="Cible"><textarea name="description" placeholder="Description"></textarea><button class="button button-primary">Créer</button></form></div>
+          <div class="card"><h3>Évaluations RH</h3><div id="list-evaluations-rh" class="data-list"></div><form data-block-action="/evaluations-rh" class="business-form"><input name="employeId" type="number" placeholder="Salarié" required><input name="evaluateurId" type="number" placeholder="Évaluateur" required><input name="dateEvaluation" type="date" required><input name="noteGlobale" type="number" step="0.01" min="0" max="20" placeholder="Note"><textarea name="commentaires" placeholder="Commentaires"></textarea><button class="button button-primary">Enregistrer</button></form></div>
+          <div class="card"><h3>Formations</h3><div id="list-formations" class="data-list"></div><form data-block-action="/formations" class="business-form"><input name="titre" placeholder="Titre" required><input name="dureeHeures" type="number" placeholder="Durée (heures)" required><input name="employeId" type="number" placeholder="Employé"><input name="dateDebut" type="date"><input name="dateFin" type="date"><textarea name="description" placeholder="Description"></textarea><button class="button button-primary">Planifier</button></form></div>
+        </div>
+      </section>
+      <section class="page" data-page-content="bloc10">
+        <div class="page-heading"><div><p class="eyebrow">Bloc 10</p><h2>Carrière et mobilité</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Historique des affectations</h3><div id="list-carrieres" class="data-list"></div><form data-block-action="/carrieres" class="business-form"><input name="employeId" type="number" placeholder="Employé" required><input name="posteId" type="number" placeholder="Poste" required><input name="departementId" type="number" placeholder="Département"><input name="dateDebut" type="date" required><input name="dateFin" type="date"><input name="motif" placeholder="Motif"><button class="button button-primary">Ajouter</button></form></div>
+          <div class="card"><h3>Promotions</h3><div id="list-promotions" class="data-list"></div><form data-block-action="/promotions" class="business-form"><input name="employeId" type="number" placeholder="Employé" required><input name="ancienPosteId" type="number" placeholder="Ancien poste" required><input name="nouveauPosteId" type="number" placeholder="Nouveau poste" required><input name="dateEffet" type="date" required><input name="augmentationSalaire" type="number" step="0.01" placeholder="Augmentation"><input name="motif" placeholder="Motif"><button class="button button-primary">Enregistrer</button></form></div>
+          <div class="card"><h3>Mutations</h3><div id="list-mutations" class="data-list"></div><form data-block-action="/mutations" class="business-form"><input name="employeId" type="number" placeholder="Employé" required><input name="ancienDepartementId" type="number" placeholder="Ancien département"><input name="nouveauDepartementId" type="number" placeholder="Nouveau département"><input name="dateEffet" type="date" required><textarea name="motif" placeholder="Motif"></textarea><button class="button button-primary">Enregistrer</button></form></div>
+          <div class="card"><h3>Historique des salaires</h3><div id="list-historiques-salaires" class="data-list"></div></div>
+        </div>
+      </section>
+      <section class="page" data-page-content="bloc11">
+        <div class="page-heading"><div><p class="eyebrow">Bloc 11</p><h2>Discipline</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Incidents</h3><div id="list-incidents-disciplinaires" class="data-list"></div><form data-block-action="/incidents-disciplinaires" class="business-form"><input name="employeId" type="number" placeholder="Employé" required><input name="dateIncident" type="date" required><input name="motif" placeholder="Motif" required><textarea name="description" placeholder="Description"></textarea><select name="gravite"><option>FAIBLE</option><option selected>MOYENNE</option><option>GRAVE</option><option>TRES_GRAVE</option></select><button class="button button-primary">Déclarer</button></form></div>
+          <div class="card"><h3>Procédures</h3><div id="list-procedures-disciplinaires" class="data-list"></div><form data-block-action="/procedures-disciplinaires" class="business-form"><input name="incidentId" type="number" placeholder="Incident" required><input name="dateDemandeExplication" type="date" required><textarea name="demandeExplication" placeholder="Demande d'explication" required></textarea><button class="button button-primary">Démarrer</button></form></div>
+          <div class="card"><h3>Sanctions</h3><div id="list-sanctions-disciplinaires" class="data-list"></div><form data-block-action="/sanctions-disciplinaires" class="business-form"><input name="procedureId" type="number" placeholder="Procédure" required><select name="typeSanction"><option>AVERTISSEMENT_ECRIT</option><option>MISE_A_PIED</option><option>RETROGRADATION</option><option>LICENCIEMENT_DISCIPLINAIRE</option></select><input name="dateNotification" type="date" required><textarea name="description" placeholder="Description"></textarea><button class="button button-primary">Notifier</button></form></div>
+        </div>
+      </section>
+      <section class="page" data-page-content="bloc12">
+        <div class="page-heading"><div><p class="eyebrow">Bloc 12</p><h2>Rupture et offboarding</h2></div></div>
+        <div class="grid-2">
+          <div class="card"><h3>Ruptures</h3><div id="list-ruptures" class="data-list"></div><form data-block-action="/ruptures" class="business-form"><input name="employeId" type="number" placeholder="Employé" required><input name="contratId" type="number" placeholder="Contrat" required><select name="motif"><option>DEMISSION</option><option>LICENCIEMENT</option><option>FIN_CDD</option><option>RETRAITE</option><option>RUPTURE_CONVENTIONNELLE</option></select><input name="dateNotification" type="date" required><input name="dateSortiePrevue" type="date" required><input name="joursPreavis" type="number" value="30"><input name="joursCongesRestants" type="number" step="0.01" value="0"><button class="button button-primary">Enregistrer la sortie</button></form></div>
+          <div class="card"><h3>Solde de tout compte</h3><div id="list-soldes-tout-compte" class="data-list"></div><p class="muted">Après création d'une rupture, le solde est calculé avec <code>GET /api/ruptures/{id}/solde</code>.</p></div>
         </div>
       </section>
 
@@ -205,6 +243,96 @@
         <div class="card">
           <h3>Accès à l'application</h3>
           <p class="muted">Les opérations se font maintenant avec les formulaires métier de chaque module. Les résultats sont présentés sous forme de fiches lisibles.</p>
+        </div>
+      </section>
+      <!-- PAIE SECTION -->
+      <section class="page" data-page-content="paie">
+        <div class="page-header">
+          <h2>&#128176; Gestion de la Paie</h2>
+        </div>
+
+        <!-- Créer une période -->
+        <div class="card" style="margin-bottom:16px;">
+          <h3>Créer / sélectionner une période de paie</h3>
+          <form id="form-periode-paie" style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;">
+            <div>
+              <label>Mois</label>
+              <select id="paie-mois" class="input-field">
+                <option value="1">Janvier</option><option value="2">Février</option>
+                <option value="3">Mars</option><option value="4">Avril</option>
+                <option value="5">Mai</option><option value="6">Juin</option>
+                <option value="7">Juillet</option><option value="8">Août</option>
+                <option value="9">Septembre</option><option value="10">Octobre</option>
+                <option value="11" selected>Novembre</option><option value="12">Décembre</option>
+              </select>
+            </div>
+            <div>
+              <label>Année</label>
+              <input type="number" id="paie-annee" class="input-field" value="2026" min="2020" max="2099" style="width:90px;">
+            </div>
+            <button type="submit" class="btn btn-primary">Créer / Ouvrir</button>
+          </form>
+          <div id="periode-info" style="margin-top:10px;color:#2d7a2d;font-weight:600;"></div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card" style="margin-bottom:16px;" id="paie-actions" style="display:none;">
+          <h3>Actions</h3>
+          <div style="display:flex;gap:12px;flex-wrap:wrap;">
+            <button id="btn-generer-paie" class="btn btn-primary">&#9654; Générer les bulletins</button>
+            <button id="btn-excel-etat" class="btn" style="background:#217346;color:#fff;">&#128202; Exporter État de Paie (Excel)</button>
+          </div>
+          <div id="paie-action-msg" style="margin-top:8px;color:#666;"></div>
+        </div>
+
+        <div class="card" style="margin-bottom:16px;">
+          <h3>Variables de paie</h3>
+          <form id="form-variable-paie" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+            <label>Employé (ID)<input type="number" id="variable-employe" class="input-field" min="1" required></label>
+            <label>Type<select id="variable-type" class="input-field">
+              <option value="PRIME_RENDEMENT">Prime de rendement</option>
+              <option value="PRIME_ANCIENNETE">Prime d'ancienneté</option>
+              <option value="RAPPEL">Rappel</option>
+              <option value="AUTRES_INDEMNITES">Autres indemnités</option>
+            </select></label>
+            <label>Libellé<input type="text" id="variable-libelle" class="input-field" required></label>
+            <label>Montant<input type="number" id="variable-montant" class="input-field" min="0" step="0.01" required></label>
+            <button type="submit" class="btn btn-primary">Ajouter</button>
+          </form>
+          <div id="variable-msg" style="margin-top:8px;color:#666;"></div>
+        </div>
+
+        <!-- Liste des bulletins -->
+        <div class="card" id="bulletins-container">
+          <h3>Bulletins de paie</h3>
+          <div id="bulletins-list">
+            <p class="muted">Créez ou sélectionnez une période pour voir les bulletins.</p>
+          </div>
+        </div>
+
+        <!-- Détail bulletin + HS -->
+        <div class="card" id="bulletin-detail" style="display:none;margin-top:16px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <h3 id="bulletin-detail-title">Détail du bulletin</h3>
+            <button id="btn-close-detail" class="btn" style="background:#ccc;">&#10005; Fermer</button>
+          </div>
+          <div id="bulletin-detail-body"></div>
+
+          <!-- Formulaire HS -->
+          <div style="margin-top:16px;border-top:1px solid #eee;padding-top:16px;">
+            <h4>Modifier les heures supplémentaires (semaine)</h4>
+            <form id="form-hs" style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+              <input type="hidden" id="hs-bulletin-id">
+              <div><label>Sem.</label><input type="number" id="hs-semaine" class="input-field" value="1" min="1" max="4" style="width:60px;"></div>
+              <div><label>8 premiers hrs (+30%)</label><input type="number" id="hs-h30" class="input-field" value="0" step="0.5" style="width:70px;"></div>
+              <div><label>12 hrs restant (+50%)</label><input type="number" id="hs-h50" class="input-field" value="0" step="0.5" style="width:70px;"></div>
+              <div><label>Week-end (+40%)</label><input type="number" id="hs-wk" class="input-field" value="0" step="0.5" style="width:70px;"></div>
+              <div><label>Férié (+100%)</label><input type="number" id="hs-fer" class="input-field" value="0" step="0.5" style="width:70px;"></div>
+              <div><label>Nuit (+30%)</label><input type="number" id="hs-nuit" class="input-field" value="0" step="0.5" style="width:70px;"></div>
+              <button type="submit" class="btn btn-primary">Mettre à jour</button>
+            </form>
+            <div id="hs-msg" style="margin-top:8px;color:#666;"></div>
+          </div>
         </div>
       </section>
     </main>
