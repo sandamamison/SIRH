@@ -35,6 +35,15 @@ public class Employe {
     @Column
     private Long departementId;
 
+    @Column(name = "numero_cnaps", length = 50)
+    private String numeroCnaps;
+
+    @Column(length = 20)
+    private String classification;
+
+    @Column
+    private Double indice;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
@@ -96,6 +105,30 @@ public class Employe {
 
     public void setDepartementId(Long departementId) {
         this.departementId = departementId;
+    }
+
+    public String getNumeroCnaps() {
+        return numeroCnaps;
+    }
+
+    public void setNumeroCnaps(String numeroCnaps) {
+        this.numeroCnaps = numeroCnaps;
+    }
+
+    public String getClassification() {
+        return classification;
+    }
+
+    public void setClassification(String classification) {
+        this.classification = classification;
+    }
+
+    public Double getIndice() {
+        return indice;
+    }
+
+    public void setIndice(Double indice) {
+        this.indice = indice;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/dossier-salarie/**").hasAnyRole("SALARIE", "MANAGER", "RH", "DIRECTION", "ADMIN")
                 .requestMatchers("/api/pointages/**", "/api/plannings/**").hasAnyRole("SALARIE", "MANAGER", "RH", "DIRECTION", "ADMIN")
                 .requestMatchers("/api/conges/**", "/api/absences/**").hasAnyRole("SALARIE", "MANAGER", "RH", "DIRECTION", "ADMIN")
+                .requestMatchers("/api/paie/**").hasAnyRole("SALARIE", "MANAGER", "RH", "DIRECTION", "ADMIN")
                 .anyRequest().hasAnyRole("DIRECTION", "ADMIN")
             )
             .formLogin(form -> form
